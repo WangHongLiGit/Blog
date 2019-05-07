@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/WangHongLiGit/Blog/issues"
   },
-  "homepage": "https://github.com/WangHongLiGit/Blog#readme"
+  "homepage": "https://github.com/WangHongLiGit/Blog#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
 }
