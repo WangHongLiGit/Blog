@@ -12,6 +12,10 @@ import {
 //测试图片的引入
 import imgPath from '../img/dns.png'
 
+import ContactAndAdvertisment from '../component/ContactAndAdvertisment'
+import Support from '../component/Support'
+
+
 //1.左侧博文数据
 const extra = (
     <a>
@@ -69,24 +73,6 @@ const CardExampleContentBlock = () => (
     </Card>
 )
 
-//3.右侧广告位
-const ContactAndAdvertisment = () => (
-    <Card fluid>
-        <Card.Content>
-            <Card.Header>广告位</Card.Header>
-        </Card.Content>
-        <Card.Content >
-            <Image
-                src='https://react.semantic-ui.com/images/wireframe/image-text.png'
-                as='a'
-                size='medium'
-                href='http://google.com'
-                target='_blank'
-            />
-        </Card.Content>
-    </Card>
-)
-
 
 class HomeCenter extends Component {
     render() {
@@ -97,7 +83,7 @@ class HomeCenter extends Component {
                 <Grid.Column mobile={16} tablet={12} computer={12} style={{ padding: "0px" }}>
                     <Grid columns={16} style={{ padding: "0px" }}>
                         <Grid.Column mobile={16} tablet={16} computer={15} style={{ padding: "0px" }}>
-                            <Header as='h2'>
+                            <Header as='h3'>
                                 <Icon name='hotjar' />
                                 <Header.Content>热门博文</Header.Content>
                             </Header>
@@ -151,7 +137,14 @@ class HomeCenter extends Component {
                         @联系作者
                     </Header>
                 </Grid.Column>
+
+                <Grid.Column mobile={16} tablet={12} computer={12} style={{ padding: "0px" }}>
+                    <Support></Support>
+                </Grid.Column>
             </Grid>
+
+
+
         )
     }
 }

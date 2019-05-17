@@ -19,6 +19,12 @@
   color: white;
 }
 
+/* 很重要:  去除所有的a标签的点击效果和轮廓 */
+a{
+  outline: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent
+}
 .App-link {
   color: #61dafb;
 }
