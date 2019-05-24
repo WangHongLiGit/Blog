@@ -19,14 +19,14 @@ export default function reducer(
             isPasswordCorrect: false,
         },
         //昵称输入框
-        nickNameInput: {
-            nickName: "",
-            isNameCorrect: false,
+        nicknameInput: {
+            nickname: "",
+            isNicknameCorrect: false,
         },
         //警告状态
         danger: {
-            passwordRed: false,
-            nameInputRed: false,
+            passwordInputRed: false,
+            nicknameInputRed: false,
             accoutInputRed: false,
             isShowDanger: false,
             dangerText: ""

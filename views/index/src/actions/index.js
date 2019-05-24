@@ -1,12 +1,11 @@
 import $ from "jquery";
-// import axios from 'axios'
 
 //设置定时器
 let timer;
 var baseUrl = {}
-// http://127.0.0.1:9000
+// http://127.0.0.1:4000
 baseUrl.get = function (path) {
-    return '' + path
+    return 'http://127.0.0.1:4000' + path
 }
 
 export const CHANGE_SINGLE_STATE = "CHANGE_SINGLE_STATE";
@@ -30,7 +29,7 @@ export function return_change_double_state_action(name_1, state_1, name_2, state
 }
 
 export const CHANGE_FOUR_STATE = "CHANGE_FOUR_STATE";
-export function return_change_four_state_action(name_1, state_1, name_2, state_2, name_3, state_3,name_4,state_4) {
+export function return_change_four_state_action(name_1, state_1, name_2, state_2, name_3, state_3, name_4, state_4) {
     return {
         type: CHANGE_FOUR_STATE,
         name_1,
@@ -50,10 +49,11 @@ export function handle_account_input(value, danger, accoutInput) {
     return dispatch => {
         danger = {
             ...danger,
-            isShowDanger: false,
-            accoutInputRed: false
+            accoutInputRed: false,
+            passwordInputRed: false,
+            nameInputRed: false
         }
-        if (value.length >4&&value.length < 11) {
+        if (value.length > 4 && value.length < 11) {
             accoutInput = {
                 ...accoutInput,
                 accoutNumber: value,
@@ -73,175 +73,168 @@ export function handle_account_input(value, danger, accoutInput) {
 
 
 //密码输入框________________________________________________________________________________________________
-export function handle_password_input(value, passwordInput, danger) {
+export function handle_password_input(value, danger, passwordInput) {
     return dispatch => {
-        danger = {
-            ...danger,
-            isShowDanger: false,
-            passwordRed: false
-        }
         passwordInput = {
             ...passwordInput,
             passwordNumber: value,
-            isPasswordCorrect: false,
+        }
+        danger = {
+            ...danger,
+            accoutInputRed: false,
+            passwordInputRed: false,
+            nicknameInputRed: false
         }
         dispatch(return_change_double_state_action("passwordInput", passwordInput, "danger", danger))
-
-
-        //每次输入密码的时候我们都要进行密码验证
-        $.get(baseUrl.get(`/user/check?type=${"password"}&value=${passwordInput.passwordNumber}`))
-        .then(res => {
-            if (res.result == 1) {
-                passwordInput = {
-                    ...passwordInput,
-                    isPasswordCorrect: true,
-                }
-                dispatch(return_change_single_state_action("passwordInput", passwordInput))
-            }else if(res.result == 0){
-                danger = {
-                    ...danger,
-                    passwordRed: true,
-                    isShowDanger: true,
-                    dangerText: "要求6~16位  不得全是相同数字的密码"
-                }
-                dispatch(return_change_single_state_action("danger", danger))
-            }
-        })
     }
 }
 
 
 //登录点击按钮
-export function handle_login_click(accoutInput,passwordInput, danger) {
+export function handle_login_click(accoutInput, passwordInput, danger) {
     return dispatch => {
-            if (accoutInput.accoutNumber.length == 0) {
-                danger = {
-                    ...danger,
-                    accoutInputRed: true,
-                    isShowDanger: true,
-                    dangerText: "账号不能为空"
-                }
-                dispatch(return_change_single_state_action("danger", danger))
-
-            } else if (!accoutInput.isAccoutCorrect) {
-                //isAccoutCorrect检查格式是否正确
-                danger = {
-                    ...danger,
-                    accoutInputRed: true,
-                    isShowDanger: true,
-                    dangerText: "账号格式错误 请输入5~11位账号"
-                }
-                dispatch(return_change_single_state_action("danger", danger))
-            } else if (passwordInput.passwordNumber.length == 0) {
-                danger = {
-                    ...danger,
-                    isShowDanger: true,
-                    passwordRed: true,
-                    dangerText: "请输入密码"
-                }
-                dispatch(return_change_single_state_action("danger", danger))
-            } else if (!passwordInput.passwordNumber.length == 0) {
-
-
-                //密码不为空的的时候  就可以发送到后台验证   验证账号密码的正确性   
-                //登录的时候不用判断密码的格式 只有在设置的时候才用判断
-               $.post(baseUrl.get(`/login`),{
-                phone:accoutInput.accoutNumber,
-                password:passwordInput.passwordNumber
-               })
-                    .then(res => {
-                            //登录成功   直接进入个人中心
-                            window.location.href = "/explore"
-
-                    }).catch(res => {
-                        console.log(res.responseJSON.code)
-                        if (res.responseJSON.code == 1210) {
-                            danger = {
-                                ...danger,
-                                accoutInputRed: true,
-                                isShowDanger: true,
-                                dangerText: "该手机号还没有注册"
-                            }
-                            dispatch(return_change_single_state_action("danger", danger))
-                        } else if (res.responseJSON.code == 1209) {
-                            danger = {
-                                ...danger,
-                                passwordRed: true,
-                                isShowDanger: true,
-                                dangerText: "输入的密码不正确"
-                            }
-                            dispatch(return_change_single_state_action("danger", danger))
-                        }
-                    })
+        if (accoutInput.accoutNumber.length == 0) {
+            danger = {
+                ...danger,
+                accoutInputRed: true,
+                dangerText: "请输入账号"
             }
+            dispatch(return_change_single_state_action("danger", danger))
+
+        } else if (!accoutInput.isAccoutCorrect) {
+            //isAccoutCorrect检查格式是否正确
+            danger = {
+                ...danger,
+                accoutInputRed: true,
+                dangerText: "账号格式错误 请输入5~11位账号"
+            }
+            dispatch(return_change_single_state_action("danger", danger))
+        } else if (passwordInput.passwordNumber.length == 0) {
+            danger = {
+                ...danger,
+                passwordInputRed: true,
+                dangerText: "请输入密码"
+            }
+            dispatch(return_change_single_state_action("danger", danger))
+        } else if (!passwordInput.passwordNumber.length == 0) {
+
+
+            //密码不为空的的时候  就可以发送到后台验证   验证账号密码的正确性   
+            //登录的时候不用判断密码的格式 只有在设置的时候才用判断
+
+            $.ajax({
+                type: "post",
+                url: baseUrl.get(`/login`),
+                xhrFields: { withCredentials: true },
+                dataType: "json",
+                data: {
+                    account: accoutInput.accoutNumber,
+                    password: passwordInput.passwordNumber
+                },
+                success: function (data) {
+                    console.log("success", data)
+                },
+                error: function (data) {
+                    if (data.responseJSON.code == 1002) {
+                        danger = {
+                            ...danger,
+                            accoutInputRed: true,
+                            dangerText: "该账号号还没有注册"
+                        }
+                        dispatch(return_change_single_state_action("danger", danger))
+                    } else if (data.responseJSON.code == 1001) {
+                        danger = {
+                            ...danger,
+                            passwordInputRed: true,
+                            dangerText: "输入的密码不正确"
+                        }
+                        dispatch(return_change_single_state_action("danger", danger))
+                    }
+                }
+            })
         }
+    }
 }
 
 
 //注册点击按钮
-export function handle_register_click(accoutInput,passwordInput, danger) {
+export function handle_register_click(accoutInput, passwordInput, danger) {
     return dispatch => {
-            if (accoutInput.accoutNumber.length == 0) {
-                danger = {
-                    ...danger,
-                    accoutInputRed: true,
-                    isShowDanger: true,
-                    dangerText: "账号不能为空"
-                }
-                dispatch(return_change_single_state_action("danger", danger))
+        if (accoutInput.accoutNumber.length == 0) {
+            danger = {
+                ...danger,
+                accoutInputRed: true,
+                dangerText: "账号不能设置为空"
+            }
+            dispatch(return_change_single_state_action("danger", danger))
 
-            } else if (!accoutInput.isAccoutCorrect) {
-                //isAccoutCorrect检查格式是否正确
-                danger = {
-                    ...danger,
-                    accoutInputRed: true,
-                    isShowDanger: true,
-                    dangerText: "账号格式错误 请设置5~11位账号"
-                }
-                dispatch(return_change_single_state_action("danger", danger))
-            } else if (passwordInput.passwordNumber.length == 0) {
-                danger = {
-                    ...danger,
-                    isShowDanger: true,
-                    passwordRed: true,
-                    dangerText: "密码不能设置为空"
-                }
-                dispatch(return_change_single_state_action("danger", danger))
-            } else if (!passwordInput.passwordNumber.length == 0) {
-
-
-                //密码不为空的的时候  就可以发送到后台验证   验证账号密码的正确性   
-                //登录的时候不用判断密码的格式 只有在设置的时候才用判断
-               $.post(baseUrl.get(`/login`),{
-                phone:accoutInput.accoutNumber,
-                password:passwordInput.passwordNumber
-               })
-                    .then(res => {
-                            //登录成功   直接进入个人中心
-                            window.location.href = "/explore"
-
-                    }).catch(res => {
-                        console.log(res.responseJSON.code)
-                        if (res.responseJSON.code == 1210) {
+        } else if (!accoutInput.isAccoutCorrect) {
+            //isAccoutCorrect检查格式是否正确
+            danger = {
+                ...danger,
+                accoutInputRed: true,
+                dangerText: "账号格式错误 请设置5~16位账号"
+            }
+            dispatch(return_change_single_state_action("danger", danger))
+        } else if (accoutInput.isAccoutCorrect) {
+            $.ajax({
+                type: "post",
+                url: baseUrl.get(`/isRegistered`),
+                xhrFields: { withCredentials: true },
+                dataType: "json",
+                data: {
+                    account: accoutInput.accoutNumber,
+                },
+                success: function (data) {
+                    if (passwordInput.passwordNumber.length == 0) {
+                        danger = {
+                            ...danger,
+                            passwordInputRed: true,
+                            dangerText: "密码不能设置为空"
+                        }
+                        dispatch(return_change_single_state_action("danger", danger))
+                    } else if (!passwordInput.passwordNumber.length == 0) {
+                        var reg = /^[a-zA-Z0-9]{5,11}$/;
+                        if (reg.test(passwordInput.passwordNumber)) {
+                            $.ajax({
+                                type: "post",
+                                url: baseUrl.get(`/register`),
+                                xhrFields: { withCredentials: true },
+                                dataType: "json",
+                                data: {
+                                    account: accoutInput.accoutNumber,
+                                    password: passwordInput.passwordNumber
+                                },
+                                success: function (data) {
+                                    console.log("success", data)
+                                },
+                                error: function (data) {
+                                    console.log("error", data)
+                                }
+                            })
+                        }else{
                             danger = {
                                 ...danger,
-                                accoutInputRed: true,
-                                isShowDanger: true,
-                                dangerText: "该手机号还没有注册"
-                            }
-                            dispatch(return_change_single_state_action("danger", danger))
-                        } else if (res.responseJSON.code == 1209) {
-                            danger = {
-                                ...danger,
-                                passwordRed: true,
-                                isShowDanger: true,
-                                dangerText: "输入的密码不正确"
+                                passwordInputRed: true,
+                                dangerText: "请设置5-15位密码 不能包含特殊字符"
                             }
                             dispatch(return_change_single_state_action("danger", danger))
                         }
-                    })
-            }
+                    }
+                },
+                error: function (data) {
+                    if (data.responseJSON.code == 1003) {
+                        danger = {
+                            ...danger,
+                            accoutInputRed: true,
+                            dangerText: "该账号已经注册"
+                        }
+                        dispatch(return_change_single_state_action("danger", danger))
+                    }
+                }
+            })
         }
+    }
 }
 
 //注册时  填写用户名密码  点击进入中心 
@@ -284,10 +277,10 @@ export function handle_login_click_1(accoutInput, nickNameInput, passwordInput, 
             } else if (passwordInput.isPasswordCorrect) {
                 //只有在密码格式正确的时候  我们才能提交 昵称和密码  进行注册
                 $.post(baseUrl.get(`/user/set_user`),
-                {
-                    new_username:nickNameInput.nickName,
-                    new_password:passwordInput.passwordNumber
-                }).then(res => {
+                    {
+                        new_username: nickNameInput.nickName,
+                        new_password: passwordInput.passwordNumber
+                    }).then(res => {
                         if (res.code == 200) {
                             //完整的注册成功   直接进入个人中心
                             window.location.href = baseUrl.get("/");
@@ -325,13 +318,13 @@ export function handle_login_click_1(accoutInput, nickNameInput, passwordInput, 
 
                 //密码不为空的的时候  就可以发送到后台验证   验证账号密码的正确性   
                 //登录的时候不用判断密码的格式 只有在设置的时候才用判断
-               $.post(baseUrl.get(`/login`),{
-                phone:accoutInput.accoutNumber,
-                password:passwordInput.passwordNumber
-               })
+                $.post(baseUrl.get(`/login`), {
+                    phone: accoutInput.accoutNumber,
+                    password: passwordInput.passwordNumber
+                })
                     .then(res => {
-                            //登录成功   直接进入个人中心
-                            window.location.href = "/explore"
+                        //登录成功   直接进入个人中心
+                        window.location.href = "/explore"
 
                     }).catch(res => {
                         console.log(res.responseJSON.code)
@@ -435,13 +428,13 @@ export function handle_register_click_1(accoutInput, messageInput, danger, histo
                 //短信登录的时候
                 $.post(
                     baseUrl.get(`/phone_login`)
-                ,{
-                    phone:accoutInput.accoutNumber,
-                    code:messageInput.messageNumber
-                })
+                    , {
+                        phone: accoutInput.accoutNumber,
+                        code: messageInput.messageNumber
+                    })
                     .then(res => {
-                            //短信登录成功   直接进入个人中心
-                            window.location.href = baseUrl.get("/");
+                        //短信登录成功   直接进入个人中心
+                        window.location.href = baseUrl.get("/");
                     }).catch(err => {
                         if (err.responseJSON.code == 1210) {
                             danger = {
@@ -501,7 +494,7 @@ export function handle_nickName_input(value, danger, nickNameInput) {
 
 
 //切换登录路由的时候要进行   状态清除
-export function handle_change_route(accoutInput, passwordInput, nickNameInput,danger) {
+export function handle_change_route(accoutInput, passwordInput, nickNameInput, danger) {
     accoutInput = {
         ...accoutInput,
         accoutNumber: ""
@@ -514,11 +507,11 @@ export function handle_change_route(accoutInput, passwordInput, nickNameInput,da
         ...nickNameInput,
         nickName: ""
     }
-    danger={
+    danger = {
         ...danger,
-        accoutInputRed:false,
-        nickNameInputRed:false,
-        passwordInput:false
+        accoutInputRed: false,
+        nicknameInputRed: false,
+        passwordInputRed: false
     }
-    return return_change_four_state_action("accoutInput", accoutInput, "passwordInput", passwordInput,"nickNameInput", nickNameInput,"danger",danger)
+    return return_change_four_state_action("accoutInput", accoutInput, "passwordInput", passwordInput, "nickNameInput", nickNameInput, "danger", danger)
 }

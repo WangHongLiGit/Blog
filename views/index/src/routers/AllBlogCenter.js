@@ -6,29 +6,23 @@ import {
     Icon,
     Image,
     Card,
-    Feed
+    Feed,
+    List,
+    Transition
 } from 'semantic-ui-react'
+import $ from "jquery";
 
 //测试图片的引入
 import imgPath from '../img/dns.png'
+import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 
-//1.左侧博文数据
-const extra = (
-    <a>
-        <Icon name='user' />
-        16 Friends
-    </a>
-)
-const CardExampleCardProps = () => (
-    <Card
-        fluid
-        image={imgPath}
-        header='Elliot Baker'
-        meta='Friend'
-        description='Elliot is a sound engineer living in Nashville who enjoys playing guitar and hanging with his cat.'
-        extra={extra}
-    />
-)
+
+var baseUrl = {}
+// http://127.0.0.1:4000
+baseUrl.get = function (path) {
+    return 'http://127.0.0.1:4000' + path
+}
+
 
 //2.右侧最近更新
 const CardExampleContentBlock = () => (
@@ -89,46 +83,87 @@ const ContactAndAdvertisment = () => (
 
 
 class AllBlogCenter extends Component {
+    state = {
+        allBlog: [],
+        loading: false,
+    }
+    componentWillMount() {
+        $.ajax({
+            type: "get",
+            url: baseUrl.get(`/allBlogCenter`),
+            xhrFields: { withCredentials: true },
+            dataType: "json",
+            beforeSend: () => {
+                this.setState({ loading: true })
+            },
+            success: (data) => {
+                this.setState({ allBlog: data, loading: false })
+            },
+        })
+    }
     render() {
+        let { allBlog, loading } = this.state;
+        console.log("从事", allBlog)
         return (
             <Grid container style={{ margin: "32px" }}>
+                {
+                    loading ?
+                        <div className="loaderDiv" >
+                            <div className="loader" style={{ top: "20%" }}>
+                                <span className="text">Loading</span>
+                                <span className="spinner"></span>
+                            </div>
+                        </div>
+                        :
+                        <Grid.Column mobile={16} tablet={12} computer={12} style={{ padding: "0px" }}>
+                            <Grid columns={16} style={{ padding: "0px" }}>
+                                <Grid.Column mobile={16} tablet={16} computer={15} style={{ padding: "0px" }}>
+                                    <Header as='h3'>
+                                        <Icon name='hotjar' />
+                                        <Header.Content>热门博文</Header.Content>
+                                    </Header>
+                                    <Divider style={{ marginBottom: "0px" }} />
+                                </Grid.Column>
 
-                {/* 左侧的博客展示 */}
-                <Grid.Column mobile={16} tablet={12} computer={12} style={{ padding: "0px" }}>
-                    <Grid columns={16} style={{ padding: "0px" }}>
-                        <Grid.Column mobile={16} tablet={16} computer={15} style={{ padding: "0px" }}>
-                            <Header as='h3'>
-                                <Icon name='hotjar' />
-                                <Header.Content>热门博文</Header.Content>
-                            </Header>
-                            <Divider />
+
+
+                                {allBlog.map((v, k) => (
+                                    <Grid.Column mobile={16} tablet={5} computer={5} key={k}
+                                    >
+                                        <Link to={`/BlogItems/${v.direcionNum}`}>
+                                            <Card fluid link>
+                                                <Image src={v.blogLogoPath} style={{ height: "110px" }} />
+                                                <Card.Content>
+                                                    <Card.Header style={{ fontSize: "1.5rem" }}>{v.title}</Card.Header>
+                                                    <Card.Description style={{ fontSize: "0.9rem" }}>
+                                                        {v.readme}
+                                                    </Card.Description>
+                                                </Card.Content>
+                                                <Card.Content extra style={{ padding: "3px" }}>
+                                                    <List style={{ width: "100%", display: "flex", justifyContent: "center", fontSize: "0.9rem" }} horizontal>
+                                                        <List.Item style={{ width: "33%", textAlign: "center" }}>
+                                                            <Icon name='user' style={{ marginRight: "4px" }} />
+                                                            HongLi
+                                                </List.Item>
+                                                        <List.Item style={{ width: "33%", textAlign: "center" }}>
+                                                            <Icon name='eye' style={{ marginRight: "4px" }} />
+                                                            {v.viewNUm}
+                                                        </List.Item>
+                                                        <List.Item style={{ width: "33%", textAlign: "center" }}>
+                                                            <Icon name='comment alternate' style={{ marginRight: "4px" }} />
+                                                            {v.commentNum}
+                                                        </List.Item>
+                                                    </List>
+                                                </Card.Content>
+                                            </Card>
+                                        </Link>
+                                    </Grid.Column>
+                                ))
+                                }
+
+                            </Grid>
                         </Grid.Column>
-                        <Grid.Column mobile={16} tablet={5} computer={5}>
-                            <CardExampleCardProps></CardExampleCardProps>
-                        </Grid.Column>
-                        <Grid.Column mobile={16} tablet={5} computer={5}>
-                            <CardExampleCardProps></CardExampleCardProps>
-                        </Grid.Column>
-                        <Grid.Column mobile={16} tablet={5} computer={5}>
-                            <CardExampleCardProps></CardExampleCardProps>
-                        </Grid.Column>
-                        <Grid.Column mobile={16} tablet={5} computer={5}>
-                            <CardExampleCardProps></CardExampleCardProps>
-                        </Grid.Column>
-                        <Grid.Column mobile={16} tablet={5} computer={5}>
-                            <CardExampleCardProps></CardExampleCardProps>
-                        </Grid.Column>
-                        <Grid.Column mobile={16} tablet={5} computer={5}>
-                            <CardExampleCardProps></CardExampleCardProps>
-                        </Grid.Column>
-                        <Grid.Column mobile={16} tablet={5} computer={5}>
-                            <CardExampleCardProps></CardExampleCardProps>
-                        </Grid.Column>
-                        <Grid.Column mobile={16} tablet={5} computer={5}>
-                            <CardExampleCardProps></CardExampleCardProps>
-                        </Grid.Column>
-                    </Grid>
-                </Grid.Column>
+                }
 
 
                 {/*右侧*/}

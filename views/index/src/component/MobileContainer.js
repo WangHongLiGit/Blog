@@ -17,6 +17,9 @@ import {
 import HomepageHeading from './HomepageHeading.js'
 import Bottom from './Bottom.js'
 
+import { connect } from 'react-redux';
+import { handle_account_input, handle_password_input, handle_login_click,handle_change_route} from "../actions"
+
 
 import logo from "../img/logo.jpg"
 
@@ -40,6 +43,15 @@ class MobileContainer extends Component {
   //点击首页链接和点击普通链接
   handleItemClick(name) {
     this.setState({ activeItem: name, IsMobilSlideUp: true, sidebarOpened: false })
+    window.scrollTo({
+      left: 0,
+      top: 0,
+      behavior: "smooth"
+    })
+  }
+  handleClearItemClick(name,accoutInput, passwordInput, nicknameInput,danger) {
+    this.setState({ activeItem: name, IsMobilSlideUp: true, sidebarOpened: false })
+    this.props.handleChangeRoute(accoutInput, passwordInput, nicknameInput,danger)
     window.scrollTo({
       left: 0,
       top: 0,
@@ -80,7 +92,8 @@ class MobileContainer extends Component {
   }
 
   render() {
-    const { children } = this.props
+    const {children,nicknameInput,accoutInput, passwordInput, danger, handleAccountInput,handlePasswordInput,handleLoginClick,handleChangeRoute} = this.props;
+
     const { sidebarOpened, activeItem, IsMobilSlideUp, fixed, visible } = this.state
     return (
       <Responsive
@@ -108,7 +121,7 @@ class MobileContainer extends Component {
         <Sidebar
           as={Menu}
           animation='push'
-          style={{ maxHeight: "1000px", position: "fixed", top: "0px", textAlign: "center" }}
+          style={{ maxHeight: "1000px", position: "fixed", top: "0px", textAlign: "center"}}
           inverted
           onHide={this.handleSidebarHide}
           vertical
@@ -128,7 +141,7 @@ class MobileContainer extends Component {
               所有博文
             </Menu.Item>
           </Link>
-          <Link to="/BlogTalk">
+          <Link to="/TalkCenter">
             <Menu.Item as='a' name='3' active={activeItem === '3'} onClick={() => { this.handleItemClick("3") }}>
               Blog留言
             </Menu.Item>
@@ -139,12 +152,12 @@ class MobileContainer extends Component {
             </Menu.Item>
           </Link>
           <Link to="/Login">
-            <Menu.Item as='a' name='5' active={activeItem === '5'} onClick={() => { this.handleItemClick("5") }}>
+            <Menu.Item as='a' name='5' active={activeItem === '5'} onClick={() => { this.handleClearItemClick("5",accoutInput, passwordInput, nicknameInput,danger) }}>
               登录
             </Menu.Item>
           </Link>
           <Link to="/Register">
-            <Menu.Item as='a' name='6' active={activeItem === '6'} onClick={() => { this.handleItemClick("6") }}>
+            <Menu.Item as='a' name='6' active={activeItem === '6'} onClick={() => { this.handleClearItemClick("6",accoutInput, passwordInput, nicknameInput,danger) }}>
               注册
             </Menu.Item>
           </Link>
@@ -161,13 +174,14 @@ class MobileContainer extends Component {
             <Segment
               inverted
               textAlign='center'
-              style={IsMobilSlideUp ? { height: "64px", padding: '0.1em 0em', transition: "all .7s ease" } : { height: "305px", padding: '0.1em 0em', transition: "all .7s ease" }}
+              style={IsMobilSlideUp ? { height: "64px", padding: '0.1em 0em', transition: "all .7s ease"} : { height: "305px", padding: '0.1em 0em', transition: "all .7s ease"}}
               vertical
             >
               <Container style={{ transform: "none" }}>
                 <Menu
                   inverted
                   pointing
+                  style={{borderWidth: "0px",}}
                   secondary
                   size='large'>
                   <Menu.Item onClick={this.handleToggle} float="left" style={{ marginBottom: " 9px" }}>
@@ -176,12 +190,12 @@ class MobileContainer extends Component {
 
                   <Menu.Item position='right'>
                     <Link to="/Login">
-                      <Button as='a' inverted onClick={() => { this.handleItemClick("5") }}>
+                      <Button as='a' inverted onClick={() => {this.handleClearItemClick("5",accoutInput, passwordInput, nicknameInput,danger) }}>
                         登录
                     </Button>
                     </Link>
                     <Link to="/Register">
-                      <Button as='a' inverted style={{ marginLeft: '0.5em' }} onClick={() => { this.handleItemClick("5") }}>
+                      <Button as='a' inverted style={{ marginLeft: '0.5em' }} onClick={() => {this.handleClearItemClick("5",accoutInput, passwordInput, nicknameInput,danger)  }}>
                         注册
                     </Button>
                     </Link>
@@ -204,4 +218,28 @@ MobileContainer.propTypes = {
   children: PropTypes.node,
 }
 
-export default MobileContainer
+
+export default connect(
+  state => {
+      return {
+          nicknameInput:state.nicknameInput,
+          accoutInput: state.accoutInput,
+          passwordInput: state.passwordInput,
+          danger: state.danger,
+      }
+  },
+  dispatch => ({
+      handleAccountInput: function (value, danger, accoutInput) {
+          dispatch(handle_account_input(value, danger, accoutInput))
+      },
+      handlePasswordInput: function (value, danger, passwordInput) {
+          dispatch(handle_password_input(value, danger, passwordInput))
+      },
+      handleLoginClick: function (accoutInput,passwordInput, danger) {
+          dispatch(handle_login_click(accoutInput,passwordInput, danger))
+      },
+      handleChangeRoute: function (accoutInput, passwordInput, nicknameInput,danger) {
+          dispatch(handle_change_route(accoutInput, passwordInput, nicknameInput,danger))
+      }
+  })
+)(MobileContainer)

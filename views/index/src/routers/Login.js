@@ -8,10 +8,10 @@ import { handle_account_input, handle_password_input, handle_login_click,handle_
 
 class Login extends Component {
     render() {
-        const { nickNameInput,accoutInput, passwordInput, danger, handleAccountInput,handlePasswordInput,handleLoginClick,handleChangeRoute} = this.props;
+        const { nicknameInput,accoutInput, passwordInput, danger, handleAccountInput,handlePasswordInput,handleLoginClick,handleChangeRoute} = this.props;
         const { accoutNumber, isAccoutExist, isAccoutCorrect } = accoutInput;
         const { passwordNumber, isPasswordCorrect } = passwordInput;
-        const { passwordRed, accoutInputRed, isShowDanger, dangerText } = danger;
+        const { passwordInputRed, accoutInputRed, dangerText } = danger;
 
         return (
             <div className='login-form'>
@@ -43,7 +43,7 @@ class Login extends Component {
                                 />
                                 
 
-                                <span style={{ color: "red",height:"20px",display:"block",marginTop:"-12px",float:"left"}}>{passwordRed?dangerText:""}</span>
+                                <span style={{ color: "red",height:"20px",display:"block",marginTop:"-12px",float:"left"}}>{passwordInputRed?dangerText:""}</span>
 
                                 <Form.Input
                                     fluid
@@ -52,14 +52,14 @@ class Login extends Component {
                                     placeholder='请输入密码'
                                     type='password'
                                     style={{ height: "50px", margin: "0px" }}
-                                    error={passwordRed}
+                                    error={passwordInputRed}
                                     onChange={(event) => { handlePasswordInput(event.target.value, danger, passwordInput) }}
                                 />
                                 <Button color='black' fluid size='large' onClick={() => { handleLoginClick(accoutInput,passwordInput, danger)}}>
                                     登录
                 </Button>
                                 <Message>
-                                    还没有账号? <Link to="/Register" onClick={()=>{handleChangeRoute(accoutInput, passwordInput, nickNameInput,danger)}}>注册</Link>
+                                    还没有账号? <Link to="/Register" onClick={()=>{handleChangeRoute(accoutInput, passwordInput, nicknameInput,danger)}}>注册</Link>
                                 </Message>
                             </Segment>
                         </Form>
@@ -80,7 +80,7 @@ class Login extends Component {
 export default connect(
     state => {
         return {
-            nickNameInput:state.nickNameInput,
+            nicknameInput:state.nicknameInput,
             accoutInput: state.accoutInput,
             passwordInput: state.passwordInput,
             danger: state.danger,
@@ -96,8 +96,8 @@ export default connect(
         handleLoginClick: function (accoutInput,passwordInput, danger) {
             dispatch(handle_login_click(accoutInput,passwordInput, danger))
         },
-        handleChangeRoute: function (accoutInput, passwordInput, nickNameInput,danger) {
-            dispatch(handle_change_route(accoutInput, passwordInput, nickNameInput,danger))
+        handleChangeRoute: function (accoutInput, passwordInput, nicknameInput,danger) {
+            dispatch(handle_change_route(accoutInput, passwordInput, nicknameInput,danger))
         }
     })
 )(Login)

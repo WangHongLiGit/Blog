@@ -8,10 +8,10 @@ import { handle_account_input, handle_password_input, handle_register_click,hand
 
 class Regiser extends Component {
     render() {
-        const { nickNameInput,accoutInput, passwordInput, danger, handleAccountInput,handlePasswordInput,handleRegisterClick,handleChangeRoute} = this.props;
+        const { nicknameInput,accoutInput, passwordInput, danger, handleAccountInput,handlePasswordInput,handleRegisterClick,handleChangeRoute} = this.props;
         const { accoutNumber, isAccoutExist, isAccoutCorrect } = accoutInput;
         const { passwordNumber, isPasswordCorrect } = passwordInput;
-        const { passwordRed, accoutInputRed, isShowDanger, dangerText } = danger;
+        const { passwordInputRed, accoutInputRed, isShowDanger, dangerText } = danger;
 
         return (
             <div className='login-form'>
@@ -43,16 +43,17 @@ class Regiser extends Component {
                                 />
 
 
-                                <span style={{ color: "red", height: "20px", display: "block", marginTop: "-12px", float: "left" }}>{passwordRed ? dangerText : ""}</span>
+                                <span style={{ color: "red", height: "20px", display: "block", marginTop: "-12px", float: "left" }}>{passwordInputRed ? dangerText : ""}</span>
 
                                 <Form.Input
                                     fluid
+                                    value={passwordNumber}
                                     icon='lock'
                                     iconPosition='left'
                                     placeholder='请设置密码'
                                     type='password'
                                     style={{ height: "50px", margin: "0px" }}
-                                    error={passwordRed}
+                                    error={passwordInputRed}
                                     onChange={(event) => { handlePasswordInput(event.target.value, danger, passwordInput) }}
                                 />
                                 <Button color='black' fluid size='large' onClick={() => { handleRegisterClick(accoutInput, passwordInput, danger) }}>
@@ -60,7 +61,7 @@ class Regiser extends Component {
                                 </Button>
                                 <Message>
                                     已经注册过账号?
-                                        <Link to="/Login"  onClick={()=>{handleChangeRoute(accoutInput, passwordInput, nickNameInput,danger)}}>直接登录</Link>
+                                        <Link to="/Login"  onClick={()=>{handleChangeRoute(accoutInput, passwordInput, nicknameInput,danger)}}>直接登录</Link>
                                 </Message>
                             </Segment>
                         </Form>
@@ -81,7 +82,7 @@ class Regiser extends Component {
 export default connect(
     state => {
         return {
-            nickNameInput:state.nickNameInput,
+            nicknameInput:state.nicknameInput,
             accoutInput: state.accoutInput,
             passwordInput: state.passwordInput,
             danger: state.danger,
@@ -97,8 +98,8 @@ export default connect(
         handleRegisterClick: function (accoutInput,passwordInput, danger) {
             dispatch(handle_register_click(accoutInput,passwordInput, danger))
         },
-        handleChangeRoute: function (accoutInput, passwordInput, nickNameInput,danger) {
-            dispatch(handle_change_route(accoutInput, passwordInput, nickNameInput,danger))
+        handleChangeRoute: function (accoutInput, passwordInput, nicknameInput,danger) {
+            dispatch(handle_change_route(accoutInput, passwordInput, nicknameInput,danger))
         }
     })
 )(Regiser)

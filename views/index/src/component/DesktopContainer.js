@@ -12,6 +12,9 @@ import PropTypes from 'prop-types'
 import HomepageHeading from './HomepageHeading.js'
 
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { handle_account_input, handle_password_input, handle_login_click,handle_change_route} from "../actions"
+
 
 
 import Bottom from './Bottom.js'
@@ -35,6 +38,15 @@ class DesktopContainer extends Component {
   handleItemClick(name) {
     this.setState({ activeItem: name, IsSlideUp: true })
   }
+  handleClearItemClick(name,accoutInput, passwordInput, nicknameInput,danger) {
+    this.setState({ activeItem: name, IsSlideUp: true})
+    this.props.handleChangeRoute(accoutInput, passwordInput, nicknameInput,danger)
+    window.scrollTo({
+      left: 0,
+      top: 0,
+      behavior: "smooth"
+    })
+  }
   handleHomeClick(name) {
     this.setState({ activeItem: name, IsSlideUp: false });
   }
@@ -46,7 +58,7 @@ class DesktopContainer extends Component {
   }
 
   render() {
-    const { children, history } = this.props
+    const {children,nicknameInput,accoutInput, passwordInput, danger, handleAccountInput,handlePasswordInput,handleLoginClick,handleChangeRoute} = this.props;
     const { fixed, IsSlideUp, activeItem } = this.state
 
     return (
@@ -95,12 +107,12 @@ class DesktopContainer extends Component {
 
                 <Menu.Item position='right' style={{marginTop: "-7px"}}>
                   <Link to="/Login">
-                    <Button as='a' inverted={!fixed} onClick={() => { this.handleItemClick("4") }}>
+                    <Button as='a' inverted={!fixed}  onClick={() => { this.handleClearItemClick("5",accoutInput, passwordInput, nicknameInput,danger) }}>
                       登录
                     </Button>
                   </Link>
                   <Link to="/Register">
-                    <Button as='a' inverted={!fixed} primary={fixed} style={{ marginLeft: '0.5em' }} onClick={() => { this.handleItemClick("4") }}>
+                    <Button as='a' inverted={!fixed} primary={fixed}  onClick={() => { this.handleClearItemClick("6",accoutInput, passwordInput, nicknameInput,danger) }}>
                       注册
                     </Button>
                   </Link>
@@ -122,5 +134,27 @@ DesktopContainer.propTypes = {
   children: PropTypes.node,
 }
 
-
-export default DesktopContainer
+export default connect(
+  state => {
+      return {
+          nicknameInput:state.nicknameInput,
+          accoutInput: state.accoutInput,
+          passwordInput: state.passwordInput,
+          danger: state.danger,
+      }
+  },
+  dispatch => ({
+      handleAccountInput: function (value, danger, accoutInput) {
+          dispatch(handle_account_input(value, danger, accoutInput))
+      },
+      handlePasswordInput: function (value, danger, passwordInput) {
+          dispatch(handle_password_input(value, danger, passwordInput))
+      },
+      handleLoginClick: function (accoutInput,passwordInput, danger) {
+          dispatch(handle_login_click(accoutInput,passwordInput, danger))
+      },
+      handleChangeRoute: function (accoutInput, passwordInput, nicknameInput,danger) {
+          dispatch(handle_change_route(accoutInput, passwordInput, nicknameInput,danger))
+      }
+  })
+)(DesktopContainer)

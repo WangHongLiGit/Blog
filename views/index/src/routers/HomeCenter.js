@@ -6,7 +6,8 @@ import {
     Icon,
     Image,
     Card,
-    Feed
+    Feed,
+    List
 } from 'semantic-ui-react'
 
 //测试图片的引入
@@ -24,14 +25,35 @@ const extra = (
     </a>
 )
 const CardExampleCardProps = () => (
-    <Card
-        fluid
-        image={imgPath}
-        header='Elliot Baker'
-        meta='Friend'
-        description='Elliot is a sound engineer living in Nashville who enjoys playing guitar and hanging with his cat.'
-        extra={extra}
-    />
+    <Card fluid>
+        <Image src={imgPath} wrapped ui={false} />
+        <Card.Content>
+            <Card.Header style={{ fontSize: "1.5rem" }}>使用express和react时出现cookie跨域问题</Card.Header>
+            <Card.Description style={{ fontSize: "0.9rem" }}>
+                擦肩恐怖i阿布i阿娇开采表示从那里出来爱上擦三次拿出来卡索拉就是你
+      </Card.Description>
+        </Card.Content>
+        <Card.Content extra>
+            <List style={{width:"100%",display: "flex",justifyContent: "center",fontSize:"0.9rem"}} horizontal>
+                <List.Item   style={{width:"33%",textAlign:"center"}}>
+                <Icon name='user' />
+                    HongLi
+                </List.Item>
+                <List.Item   style={{width:"33%",textAlign:"center"}}>
+                <Icon name='user'/>
+                    10000
+                </List.Item>
+                <List.Item style={{width:"33%",textAlign:"center"}}>
+                <Icon name='user'  />
+                    23121
+                </List.Item>
+            </List>
+ 
+
+
+
+        </Card.Content>
+    </Card>
 )
 
 //2.右侧最近更新
