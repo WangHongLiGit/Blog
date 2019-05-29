@@ -8,13 +8,14 @@ import {
     Card,
     Feed,
     List,
-    Transition
 } from 'semantic-ui-react'
 import $ from "jquery";
 
-//测试图片的引入
-import imgPath from '../img/dns.png'
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import {  Link } from 'react-router-dom';
+
+import { connect } from 'react-redux';
+import {handle_push_history} from "../actions"
+
 
 
 var baseUrl = {}
@@ -67,7 +68,7 @@ const CardExampleContentBlock = () => (
 const ContactAndAdvertisment = () => (
     <Card fluid>
         <Card.Content>
-            <Card.Header>所有博文</Card.Header>
+            <Card.Header>广告位</Card.Header>
         </Card.Content>
         <Card.Content >
             <Image
@@ -87,7 +88,16 @@ class AllBlogCenter extends Component {
         allBlog: [],
         loading: false,
     }
+    //回到顶部
+    returnUp() {
+        window.scrollTo({
+            left: 0,
+            top: 0,
+            behavior: "smooth"
+        })
+    }
     componentWillMount() {
+        this.props.handlePushHistory(this.props.historyArr,"/AllBlogCenter")
         $.ajax({
             type: "get",
             url: baseUrl.get(`/allBlogCenter`),
@@ -115,12 +125,13 @@ class AllBlogCenter extends Component {
                             </div>
                         </div>
                         :
-                        <Grid.Column mobile={16} tablet={12} computer={12} style={{ padding: "0px" }}>
+                        <Grid.Column mobile={16} tablet={12} computer={12} style={{ padding: "0px" }}
+                        >
                             <Grid columns={16} style={{ padding: "0px" }}>
                                 <Grid.Column mobile={16} tablet={16} computer={15} style={{ padding: "0px" }}>
                                     <Header as='h3'>
-                                        <Icon name='hotjar' />
-                                        <Header.Content>热门博文</Header.Content>
+                                        <Icon name='book' />
+                                        <Header.Content>所有博文</Header.Content>
                                     </Header>
                                     <Divider style={{ marginBottom: "0px" }} />
                                 </Grid.Column>
@@ -130,9 +141,9 @@ class AllBlogCenter extends Component {
                                 {allBlog.map((v, k) => (
                                     <Grid.Column mobile={16} tablet={5} computer={5} key={k}
                                     >
-                                        <Link to={`/BlogItems/${v.direcionNum}`}>
-                                            <Card fluid link>
-                                                <Image src={v.blogLogoPath} style={{ height: "110px" }} />
+                                        <Link to={`/BlogItems/${v.direcionNum}`} onClick={()=>{this.returnUp()}}>
+                                            <Card fluid link style={{ height: "100%" }}>
+                                                <Image src={v.blogLogoPath} style={{ height: "150px" }} />
                                                 <Card.Content>
                                                     <Card.Header style={{ fontSize: "1.5rem" }}>{v.title}</Card.Header>
                                                     <Card.Description style={{ fontSize: "0.9rem" }}>
@@ -191,4 +202,18 @@ class AllBlogCenter extends Component {
     }
 }
 
-export default AllBlogCenter
+
+
+//
+export default connect(
+    state => {
+        return {
+            historyArr:state.historyArr,
+        }
+    },
+    dispatch => ({
+        handlePushHistory: function (historyArr,newRoute) {
+            dispatch(handle_push_history(historyArr,newRoute))
+        },
+    })
+)(AllBlogCenter)

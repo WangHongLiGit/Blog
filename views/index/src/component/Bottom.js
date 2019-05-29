@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import {
   Container,
-  Grid,
-  Header,
   List,
   Segment,
   Divider,

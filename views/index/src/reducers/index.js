@@ -1,7 +1,8 @@
 import {
     CHANGE_SINGLE_STATE,
     CHANGE_DOUBLE_STATE,
-    CHANGE_FOUR_STATE
+    CHANGE_FOUR_STATE,
+    CHANGE_CHANGE_UP
 } from "../actions"
 
 
@@ -31,9 +32,21 @@ export default function reducer(
             isShowDanger: false,
             dangerText: ""
         },
+        IsSlideUp:false,
+        historyArr:[],
+        messageShow:{
+            open:false,
+            message:""
+        }
     }, action) {
         switch (action.type) {
         
+            case CHANGE_CHANGE_UP:
+            return {
+                ...state,
+                IsSlideUp:action.newValue
+            }
+
             case CHANGE_SINGLE_STATE:
             return {
                 ...state,

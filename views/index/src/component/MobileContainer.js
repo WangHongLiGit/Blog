@@ -10,21 +10,20 @@ import {
   Sidebar,
   Visibility,
   Transition,
-  Divider,
-  Header,
   Image
 } from 'semantic-ui-react'
 import HomepageHeading from './HomepageHeading.js'
 import Bottom from './Bottom.js'
+import MessageShow from "../component/MessageShow.js"
 
 import { connect } from 'react-redux';
-import { handle_account_input, handle_password_input, handle_login_click,handle_change_route} from "../actions"
+import {handle_change_route,handle_change_up} from "../actions"
 
 
 import logo from "../img/logo.jpg"
 
 
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 
 const getWidth = () => {
@@ -35,39 +34,27 @@ const getWidth = () => {
 //导航栏（移动版）
 class MobileContainer extends Component {
   state = {
-    activeItem: '1',
-    IsMobilSlideUp: false,
+    activeItem: "",
     fixed: false
   }
 
   //点击首页链接和点击普通链接
   handleItemClick(name) {
-    this.setState({ activeItem: name, IsMobilSlideUp: true, sidebarOpened: false })
-    window.scrollTo({
-      left: 0,
-      top: 0,
-      behavior: "smooth"
-    })
+    this.setState({ activeItem: name, sidebarOpened: false })
+    this.props.handleChangeUp(true)
+    this.returnUp()
   }
-  handleClearItemClick(name,accoutInput, passwordInput, nicknameInput,danger) {
-    this.setState({ activeItem: name, IsMobilSlideUp: true, sidebarOpened: false })
-    this.props.handleChangeRoute(accoutInput, passwordInput, nicknameInput,danger)
-    window.scrollTo({
-      left: 0,
-      top: 0,
-      behavior: "smooth"
-    })
+  handleClearItemClick(name, accoutInput, passwordInput, nicknameInput, danger) {
+    this.setState({ activeItem: name, IsSlideUp: true, sidebarOpened: false })
+    this.props.handleChangeUp(true)
+    this.props.handleChangeRoute(accoutInput, passwordInput, nicknameInput, danger)
+    this.returnUp()
   }
   handleHomeClick(name) {
-    this.setState({ activeItem: name, IsMobilSlideUp: false, sidebarOpened: false });
-    window.scrollTo({
-      left: 0,
-      top: 0,
-      behavior: "smooth"
-    })
+    this.setState({ activeItem: name, IsSlideUp: false, sidebarOpened: false });
+    this.props.handleChangeUp(false)
+    this.returnUp()
   }
-
-
   //回到顶部
   returnUp() {
     window.scrollTo({
@@ -88,13 +75,18 @@ class MobileContainer extends Component {
 
   //相当重要了这个  因为这个是学会了运用基本的js中的wiindow中的location属性获取了一系列参数
   componentWillMount() {
-    this.setState({ IsMobilSlideUp: !(window.location.pathname == "/HomeCenter" || window.location.pathname == "/") })
+    this.setState(
+      {
+        activeItem: window.location.pathname
+      }
+    )
+    this.props.handleChangeUp(!(window.location.pathname == "/"))
   }
 
   render() {
-    const {children,nicknameInput,accoutInput, passwordInput, danger, handleAccountInput,handlePasswordInput,handleLoginClick,handleChangeRoute} = this.props;
+    const {IsSlideUp,children, nicknameInput, accoutInput, passwordInput, danger} = this.props;
 
-    const { sidebarOpened, activeItem, IsMobilSlideUp, fixed, visible } = this.state
+    const { sidebarOpened, activeItem,fixed} = this.state
     return (
       <Responsive
         as={Sidebar.Pushable}
@@ -108,12 +100,11 @@ class MobileContainer extends Component {
           <Transition visible={fixed} animation='scale' duration={300} >
             <div>
               <Button circular icon='bars' size="large" onClick={() => { this.handleToggle() }} />
-              <Link to="/" style={{textDecoration:"none"}}>
-                <Button circular icon='home' size="large"  onClick={() => { this.handleHomeClick("1") }}/>
+              <Link to="/" style={{ textDecoration: "none" }}>
+                <Button circular icon='home' size="large" onClick={() => { this.handleHomeClick("1") }} />
               </Link>
               <Button circular icon='angle up' size="large" onClick={() => { this.returnUp() }} />
             </div>
-
           </Transition>
         </div>
 
@@ -121,7 +112,7 @@ class MobileContainer extends Component {
         <Sidebar
           as={Menu}
           animation='push'
-          style={{ maxHeight: "1000px", position: "fixed", top: "0px", textAlign: "center"}}
+          style={{ maxHeight: "1000px", position: "fixed", top: "0px", textAlign: "center" }}
           inverted
           onHide={this.handleSidebarHide}
           vertical
@@ -132,32 +123,32 @@ class MobileContainer extends Component {
             <p style={{ fontSize: "20px" }}>HongLi</p>
           </Menu.Item>
           <Link to="/">
-            <Menu.Item as='a' name='1' active={activeItem === '1'} onClick={() => { this.handleHomeClick("1") }}
+            <Menu.Item as='a' name='/' active={activeItem === '/'} onClick={() => { this.handleHomeClick("/") }}
             >首页
             </Menu.Item>
           </Link>
           <Link to="/AllBlogCenter" >
-            <Menu.Item as='a' name='2' active={activeItem === '2'} onClick={() => { this.handleItemClick("2") }}>
+            <Menu.Item as='a' name='/AllBlogCenter' active={activeItem === '/AllBlogCenter'} onClick={() => { this.handleItemClick("/AllBlogCenter") }}>
               所有博文
             </Menu.Item>
           </Link>
           <Link to="/TalkCenter">
-            <Menu.Item as='a' name='3' active={activeItem === '3'} onClick={() => { this.handleItemClick("3") }}>
+            <Menu.Item as='a' name='/TalkCenter' active={activeItem === '/TalkCenter'} onClick={() => { this.handleItemClick("/TalkCenter") }}>
               Blog留言
             </Menu.Item>
           </Link>
-          <Link to="/AboutAuthor">
-            <Menu.Item as='a' name='4' active={activeItem === '4'} onClick={() => { this.handleItemClick("4") }}>
-              关于作者
+          <Link to="/userCenter">
+            <Menu.Item as='a' name='/userCenter' active={activeItem === '/userCenter'} onClick={() => { this.handleItemClick("/userCenter") }}>
+              个人信息
             </Menu.Item>
           </Link>
           <Link to="/Login">
-            <Menu.Item as='a' name='5' active={activeItem === '5'} onClick={() => { this.handleClearItemClick("5",accoutInput, passwordInput, nicknameInput,danger) }}>
+            <Menu.Item as='a' name='/Login' active={activeItem === '/Login'} onClick={() => { this.handleClearItemClick("/Login", accoutInput, passwordInput, nicknameInput, danger) }}>
               登录
             </Menu.Item>
           </Link>
           <Link to="/Register">
-            <Menu.Item as='a' name='6' active={activeItem === '6'} onClick={() => { this.handleClearItemClick("6",accoutInput, passwordInput, nicknameInput,danger) }}>
+            <Menu.Item as='a' name='/Register' active={activeItem === '/Register'} onClick={() => { this.handleClearItemClick("/Register", accoutInput, passwordInput, nicknameInput, danger) }}>
               注册
             </Menu.Item>
           </Link>
@@ -174,14 +165,14 @@ class MobileContainer extends Component {
             <Segment
               inverted
               textAlign='center'
-              style={IsMobilSlideUp ? { height: "64px", padding: '0.1em 0em', transition: "all .7s ease"} : { height: "305px", padding: '0.1em 0em', transition: "all .7s ease"}}
+              style={IsSlideUp ? { height: "64px", padding: '0.1em 0em', transition: "all .7s ease" } : { height: "305px", padding: '0.1em 0em', transition: "all .7s ease" }}
               vertical
             >
               <Container style={{ transform: "none" }}>
                 <Menu
                   inverted
                   pointing
-                  style={{borderWidth: "0px",}}
+                  style={{ borderWidth: "0px", }}
                   secondary
                   size='large'>
                   <Menu.Item onClick={this.handleToggle} float="left" style={{ marginBottom: " 9px" }}>
@@ -190,19 +181,20 @@ class MobileContainer extends Component {
 
                   <Menu.Item position='right'>
                     <Link to="/Login">
-                      <Button as='a' inverted onClick={() => {this.handleClearItemClick("5",accoutInput, passwordInput, nicknameInput,danger) }}>
+                      <Button as='a' inverted onClick={() => { this.handleClearItemClick("/Login", accoutInput, passwordInput, nicknameInput, danger) }}>
                         登录
                     </Button>
                     </Link>
                     <Link to="/Register">
-                      <Button as='a' inverted style={{ marginLeft: '0.5em' }} onClick={() => {this.handleClearItemClick("5",accoutInput, passwordInput, nicknameInput,danger)  }}>
+                      <Button as='a' inverted style={{ marginLeft: '0.5em' }} onClick={() => { this.handleClearItemClick("/Register", accoutInput, passwordInput, nicknameInput, danger) }}>
                         注册
                     </Button>
                     </Link>
                   </Menu.Item>
                 </Menu>
               </Container>
-              <HomepageHeading mobile={true} IsSlideUp={IsMobilSlideUp} />
+              <MessageShow></MessageShow>
+              <HomepageHeading mobile={true} IsSlideUp={IsSlideUp} />
             </Segment>
           </Visibility>
           {children}
@@ -221,25 +213,20 @@ MobileContainer.propTypes = {
 
 export default connect(
   state => {
-      return {
-          nicknameInput:state.nicknameInput,
-          accoutInput: state.accoutInput,
-          passwordInput: state.passwordInput,
-          danger: state.danger,
-      }
+    return {
+      nicknameInput:state.nicknameInput,
+      accoutInput: state.accoutInput,
+      passwordInput: state.passwordInput,
+      danger: state.danger,
+      IsSlideUp: state.IsSlideUp,
+    }
   },
   dispatch => ({
-      handleAccountInput: function (value, danger, accoutInput) {
-          dispatch(handle_account_input(value, danger, accoutInput))
-      },
-      handlePasswordInput: function (value, danger, passwordInput) {
-          dispatch(handle_password_input(value, danger, passwordInput))
-      },
-      handleLoginClick: function (accoutInput,passwordInput, danger) {
-          dispatch(handle_login_click(accoutInput,passwordInput, danger))
-      },
-      handleChangeRoute: function (accoutInput, passwordInput, nicknameInput,danger) {
-          dispatch(handle_change_route(accoutInput, passwordInput, nicknameInput,danger))
-      }
+    handleChangeUp: function (IsSlideUp) {
+      dispatch(handle_change_up(IsSlideUp))
+    },
+    handleChangeRoute: function (accoutInput, passwordInput, nicknameInput,danger) {
+      dispatch(handle_change_route(accoutInput, passwordInput, nicknameInput,danger))
+  }
   })
 )(MobileContainer)

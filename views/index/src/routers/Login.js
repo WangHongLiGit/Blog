@@ -5,14 +5,23 @@ import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 
 import { connect } from 'react-redux';
 import { handle_account_input, handle_password_input, handle_login_click,handle_change_route} from "../actions"
-
+import $ from "jquery";
+var baseUrl = {}
+// http://127.0.0.1:4000
+baseUrl.get = function (path) {
+    return 'http://127.0.0.1:4000' + path
+}
 class Login extends Component {
+    goBack(){
+        this.props.history.goBack()
+    }
     render() {
-        const { nicknameInput,accoutInput, passwordInput, danger, handleAccountInput,handlePasswordInput,handleLoginClick,handleChangeRoute} = this.props;
+        const { messageShow,nicknameInput,accoutInput, passwordInput, danger, handleAccountInput,handlePasswordInput,handleLoginClick,handleChangeRoute} = this.props;
         const { accoutNumber, isAccoutExist, isAccoutCorrect } = accoutInput;
         const { passwordNumber, isPasswordCorrect } = passwordInput;
         const { passwordInputRed, accoutInputRed, dangerText } = danger;
-
+        const history=this.props.history;
+        const historyArr=this.props.historyArr.reverse();
         return (
             <div className='login-form'>
                 <style>{`
@@ -26,7 +35,7 @@ class Login extends Component {
                 <Grid textAlign='center' style={{ height: '100%', margin: "34px 0px" }} verticalAlign='middle'>
                     <Grid.Column style={{ maxWidth: 450 }} mobile={16} tablet={7} computer={7}>
                         <Header as='h2' color='black' textAlign='left' style={{ paddingLeft: "15px" }}>
-                            <Button icon='arrow alternate circle left outline' basic circular /> 账号登录
+                            <Button icon='arrow alternate circle left outline' basic circular onClick={()=>{this.goBack()}} /> 账号登录
                     </Header>
                         <Form size='huge'>
                             <Segment stacked >
@@ -55,7 +64,7 @@ class Login extends Component {
                                     error={passwordInputRed}
                                     onChange={(event) => { handlePasswordInput(event.target.value, danger, passwordInput) }}
                                 />
-                                <Button color='black' fluid size='large' onClick={() => { handleLoginClick(accoutInput,passwordInput, danger)}}>
+                                <Button color='black' fluid size='large' onClick={() => { handleLoginClick(accoutInput,passwordInput, danger,history,historyArr,messageShow)}}>
                                     登录
                 </Button>
                                 <Message>
@@ -84,6 +93,8 @@ export default connect(
             accoutInput: state.accoutInput,
             passwordInput: state.passwordInput,
             danger: state.danger,
+            historyArr:state.historyArr,
+            messageShow:state.messageShow,
         }
     },
     dispatch => ({
@@ -93,11 +104,11 @@ export default connect(
         handlePasswordInput: function (value, danger, passwordInput) {
             dispatch(handle_password_input(value, danger, passwordInput))
         },
-        handleLoginClick: function (accoutInput,passwordInput, danger) {
-            dispatch(handle_login_click(accoutInput,passwordInput, danger))
+        handleLoginClick: function (accoutInput,passwordInput, danger,history,historyArr) {
+            dispatch(handle_login_click(accoutInput,passwordInput, danger,history,historyArr))
         },
         handleChangeRoute: function (accoutInput, passwordInput, nicknameInput,danger) {
             dispatch(handle_change_route(accoutInput, passwordInput, nicknameInput,danger))
-        }
+        },
     })
 )(Login)

@@ -10,10 +10,10 @@ import {
 
 import PropTypes from 'prop-types'
 import HomepageHeading from './HomepageHeading.js'
-
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import MessageShow from "../component/MessageShow.js"
+import {Link} from 'react-router-dom';
 import { connect } from 'react-redux';
-import { handle_account_input, handle_password_input, handle_login_click,handle_change_route} from "../actions"
+import {handle_change_route, handle_change_up } from "../actions"
 
 
 
@@ -32,34 +32,49 @@ const getWidth = () => {
 
 class DesktopContainer extends Component {
   state = {
-    activeItem: '1',
-    IsSlideUp: false
+    activeItem: '',
   }
   handleItemClick(name) {
-    this.setState({ activeItem: name, IsSlideUp: true })
+    this.setState({ activeItem: name })
+    this.props.handleChangeUp(true)
+    this.returnUp() 
   }
-  handleClearItemClick(name,accoutInput, passwordInput, nicknameInput,danger) {
-    this.setState({ activeItem: name, IsSlideUp: true})
-    this.props.handleChangeRoute(accoutInput, passwordInput, nicknameInput,danger)
+  handleClearItemClick(name, accoutInput, passwordInput, nicknameInput, danger) {
+    this.setState({ activeItem: name, IsSlideUp: true })
+    this.props.handleChangeUp(true)
+    this.props.handleChangeRoute(accoutInput, passwordInput, nicknameInput, danger)
+    this.returnUp() 
+  }
+  handleHomeClick(name) {
+    this.setState({ activeItem: name });
+    this.props.handleChangeUp(false)
+    this.returnUp() 
+  }
+
+
+
+  //回到顶部
+  returnUp() {
     window.scrollTo({
       left: 0,
       top: 0,
       behavior: "smooth"
     })
   }
-  handleHomeClick(name) {
-    this.setState({ activeItem: name, IsSlideUp: false });
-  }
   hideFixedMenu = () => this.setState({ fixed: false })
   showFixedMenu = () => this.setState({ fixed: true })
   //相当重要了这个  因为这个是学会了运用基本的js中的wiindow中的location属性获取了一系列参数
   componentWillMount() {
-    this.setState({ IsSlideUp: !(window.location.pathname == "/HomeCenter" || window.location.pathname == "/") })
+    this.setState({
+      activeItem: window.location.pathname
+    })
+    this.props.handleChangeUp(!(window.location.pathname == "/"))
+
   }
 
   render() {
-    const {children,nicknameInput,accoutInput, passwordInput, danger, handleAccountInput,handlePasswordInput,handleLoginClick,handleChangeRoute} = this.props;
-    const { fixed, IsSlideUp, activeItem } = this.state
+    const { IsSlideUp, children, nicknameInput, accoutInput, passwordInput, danger, handleAccountInput, handlePasswordInput, handleLoginClick, handleChangeRoute } = this.props;
+    const { fixed, activeItem } = this.state
 
     return (
       //在桌面宽度下可见  小于最小桌面宽度不可见
@@ -85,34 +100,34 @@ class DesktopContainer extends Component {
             >
               <Container>
                 <Link to="/">
-                  <Menu.Item name='1' active={activeItem === '1'} onClick={() => { this.handleHomeClick("1") }}>
+                  <Menu.Item name='/' active={activeItem === '/'} onClick={() => { this.handleHomeClick("/") }}>
                     首页
                 </Menu.Item>
                 </Link>
                 <Link to="/AllBlogCenter">
-                  <Menu.Item name='2' active={activeItem === '2'} onClick={() => { this.handleItemClick("2") }}>
+                  <Menu.Item name='/AllBlogCenter' active={activeItem === '/AllBlogCenter'} onClick={() => { this.handleItemClick("/AllBlogCenter") }}>
                     全部博文
                 </Menu.Item>
                 </Link>
-                <Link to="/BlogTalk">
-                  <Menu.Item name='3' active={activeItem === '3'} onClick={() => { this.handleItemClick("3") }}>
-                  Blog留言
+                <Link to="/TalkCenter">
+                  <Menu.Item name='/TalkCenter' active={activeItem === '/TalkCenter'} onClick={() => { this.handleItemClick("/TalkCenter") }}>
+                    Blog留言
                 </Menu.Item>
                 </Link>
-                <Link to="/ItemCenter">
-                  <Menu.Item name='4' active={activeItem === '4'} onClick={() => { this.handleItemClick("4") }}>
-                    关于作者
+                <Link to="/userCenter">
+                  <Menu.Item name='/userCenter' active={activeItem === '/userCenter'} onClick={() => { this.handleItemClick("/userCenter") }}>
+                    个人信息
                 </Menu.Item>
                 </Link>
 
-                <Menu.Item position='right' style={{marginTop: "-7px"}}>
+                <Menu.Item position='right' style={{ marginTop: "-7px" }}>
                   <Link to="/Login">
-                    <Button as='a' inverted={!fixed}  onClick={() => { this.handleClearItemClick("5",accoutInput, passwordInput, nicknameInput,danger) }}>
+                    <Button as='a' inverted={!fixed} onClick={() => { this.handleClearItemClick("5", accoutInput, passwordInput, nicknameInput, danger) }}>
                       登录
                     </Button>
                   </Link>
                   <Link to="/Register">
-                    <Button as='a' inverted={!fixed} primary={fixed}  onClick={() => { this.handleClearItemClick("6",accoutInput, passwordInput, nicknameInput,danger) }}>
+                    <Button as='a' inverted={!fixed} primary={fixed} onClick={() => { this.handleClearItemClick("6", accoutInput, passwordInput, nicknameInput, danger) }}>
                       注册
                     </Button>
                   </Link>
@@ -121,6 +136,7 @@ class DesktopContainer extends Component {
               </Container>
             </Menu>
             <HomepageHeading IsSlideUp={IsSlideUp} />
+            <MessageShow></MessageShow>
           </Segment>
         </Visibility>
 
@@ -136,25 +152,20 @@ DesktopContainer.propTypes = {
 
 export default connect(
   state => {
-      return {
-          nicknameInput:state.nicknameInput,
-          accoutInput: state.accoutInput,
-          passwordInput: state.passwordInput,
-          danger: state.danger,
-      }
+    return {
+      nicknameInput: state.nicknameInput,
+      accoutInput: state.accoutInput,
+      passwordInput: state.passwordInput,
+      danger: state.danger,
+      IsSlideUp: state.IsSlideUp,
+    }
   },
   dispatch => ({
-      handleAccountInput: function (value, danger, accoutInput) {
-          dispatch(handle_account_input(value, danger, accoutInput))
-      },
-      handlePasswordInput: function (value, danger, passwordInput) {
-          dispatch(handle_password_input(value, danger, passwordInput))
-      },
-      handleLoginClick: function (accoutInput,passwordInput, danger) {
-          dispatch(handle_login_click(accoutInput,passwordInput, danger))
-      },
-      handleChangeRoute: function (accoutInput, passwordInput, nicknameInput,danger) {
-          dispatch(handle_change_route(accoutInput, passwordInput, nicknameInput,danger))
-      }
+    handleChangeUp: function (IsSlideUp) {
+      dispatch(handle_change_up(IsSlideUp))
+    },
+    handleChangeRoute: function (accoutInput, passwordInput, nicknameInput, danger) {
+      dispatch(handle_change_route(accoutInput, passwordInput, nicknameInput, danger))
+    }
   })
 )(DesktopContainer)

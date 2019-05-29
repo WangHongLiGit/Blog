@@ -4,9 +4,7 @@ import {
     Container,
     Header,
     Icon,
-    Divider,
     Transition,
-    Image
 } from 'semantic-ui-react'
 
 import PropTypes from 'prop-types'

@@ -1,17 +1,23 @@
 import React, { Component } from 'react';
-import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react'
+import { Button, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 import ContactAndAdvertisment from '../component/ContactAndAdvertisment'
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import {Link } from 'react-router-dom';
 
 import { connect } from 'react-redux';
-import { handle_account_input, handle_password_input, handle_register_click,handle_change_route} from "../actions"
+import { handle_nickname_input,handle_account_input, handle_password_input, handle_register_click,handle_change_route} from "../actions"
 
 class Regiser extends Component {
+    goBack(){
+        this.props.history.goBack()
+    }
     render() {
-        const { nicknameInput,accoutInput, passwordInput, danger, handleAccountInput,handlePasswordInput,handleRegisterClick,handleChangeRoute} = this.props;
-        const { accoutNumber, isAccoutExist, isAccoutCorrect } = accoutInput;
-        const { passwordNumber, isPasswordCorrect } = passwordInput;
-        const { passwordInputRed, accoutInputRed, isShowDanger, dangerText } = danger;
+        const { messageShow,nicknameInput,accoutInput, passwordInput, danger,handleNicknameInput, handleAccountInput,handlePasswordInput,handleRegisterClick,handleChangeRoute} = this.props;
+        const { accoutNumber} = accoutInput;
+        const { passwordNumber } = passwordInput;
+        const { nickname } = nicknameInput;
+        const history=this.props.history;
+
+        const { passwordInputRed, accoutInputRed, nicknameInputRed,dangerText } = danger;
 
         return (
             <div className='login-form'>
@@ -26,11 +32,11 @@ class Regiser extends Component {
                 <Grid textAlign='center' style={{ height: '100%', margin: "34px 0px" }} verticalAlign='middle'>
                     <Grid.Column style={{ maxWidth: 450 }} mobile={16} tablet={7} computer={7}>
                         <Header as='h2' color='black' textAlign='left' style={{ paddingLeft: "15px" }}>
-                            <Button icon='arrow alternate circle left outline' basic circular /> 注册账号
+                            <Button icon='arrow alternate circle left outline' basic circular onClick={()=>{this.goBack()}}  /> 注册账号
                     </Header>
                         <Form size='huge'>
                             <Segment stacked >
-                                <span style={{ color: "red", height: "20px", display: "block", float: "left", marginTop: "-9px" }}>{accoutInputRed ? dangerText : ""}</span>
+                                <span style={{ color: "red", height: "20px", display: "block", float: "left", marginTop: "-9px",fontSize:" 0.9rem"}}>{accoutInputRed ? dangerText : ""}</span>
 
                                 <Form.Input
                                     value={accoutNumber}
@@ -43,7 +49,7 @@ class Regiser extends Component {
                                 />
 
 
-                                <span style={{ color: "red", height: "20px", display: "block", marginTop: "-12px", float: "left" }}>{passwordInputRed ? dangerText : ""}</span>
+                                <span style={{ color: "red", height: "20px", display: "block", marginTop: "-12px", float: "left",fontSize:" 0.9rem"}}>{passwordInputRed ? dangerText : ""}</span>
 
                                 <Form.Input
                                     fluid
@@ -56,7 +62,20 @@ class Regiser extends Component {
                                     error={passwordInputRed}
                                     onChange={(event) => { handlePasswordInput(event.target.value, danger, passwordInput) }}
                                 />
-                                <Button color='black' fluid size='large' onClick={() => { handleRegisterClick(accoutInput, passwordInput, danger) }}>
+
+                                <span style={{ color: "red", height: "20px", display: "block", marginTop: "-12px", float: "left",fontSize:" 0.9rem"}}>{nicknameInputRed ? dangerText : ""}</span>
+
+                                <Form.Input
+                                    fluid
+                                    value={nickname}
+                                    icon='paw'
+                                    iconPosition='left'
+                                    placeholder='昵称'
+                                    style={{ height: "50px", margin: "0px" }}
+                                    error={nicknameInputRed}
+                                    onChange={(event) => { handleNicknameInput(event.target.value, danger, nicknameInput) }}
+                                />
+                                <Button color='black' fluid size='large' onClick={() => { handleRegisterClick(accoutInput, passwordInput,nicknameInput,danger,history,messageShow) }}>
                                 注册
                                 </Button>
                                 <Message>
@@ -86,21 +105,25 @@ export default connect(
             accoutInput: state.accoutInput,
             passwordInput: state.passwordInput,
             danger: state.danger,
+            messageShow:state.messageShow,
         }
     },
     dispatch => ({
+        handleNicknameInput: function (value, danger, nicknameInput) {
+            dispatch(handle_nickname_input(value, danger, nicknameInput))
+        },
         handleAccountInput: function (value, danger, accoutInput) {
             dispatch(handle_account_input(value, danger, accoutInput))
         },
         handlePasswordInput: function (value, danger, passwordInput) {
             dispatch(handle_password_input(value, danger, passwordInput))
         },
-        handleRegisterClick: function (accoutInput,passwordInput, danger) {
-            dispatch(handle_register_click(accoutInput,passwordInput, danger))
+        handleRegisterClick: function (accoutInput,passwordInput,nicknameInput, danger,history,messageShow) {
+            dispatch(handle_register_click(accoutInput,passwordInput,nicknameInput,danger,history,messageShow))
         },
         handleChangeRoute: function (accoutInput, passwordInput, nicknameInput,danger) {
             dispatch(handle_change_route(accoutInput, passwordInput, nicknameInput,danger))
-        }
+        },
     })
 )(Regiser)
 
