@@ -108,7 +108,15 @@ class HomeCenter extends Component {
                 this.setState({ loading: true })
             },
             success: (data) => {
-                this.setState({ hotBlog: data, loading: false })
+                this.setState({ hotBlog: data })
+                window.setTimeout(()=>{
+                    this.setState(
+                        {
+                            loading: false
+                        }
+                    ) 
+                }
+                ,600)
             },
         })
     }
@@ -130,7 +138,7 @@ class HomeCenter extends Component {
                         <Grid.Column mobile={16} tablet={12} computer={12} style={{ padding: "0px" }}>
                             <Grid columns={16} style={{ padding: "0px" }}>
                                 <Grid.Column mobile={16} tablet={16} computer={15} style={{ padding: "0px" }}>
-                                    <Header as='h3'>
+                                <Header as='h3' color='black' textAlign='left' style={{fontSize: "1.2rem",paddingLeft: "18px",fontWeight:"700"}}>
                                         <Icon name='hotjar' />
                                         <Header.Content>热门博文</Header.Content>
                                     </Header>

@@ -2,7 +2,8 @@ import {
     CHANGE_SINGLE_STATE,
     CHANGE_DOUBLE_STATE,
     CHANGE_FOUR_STATE,
-    CHANGE_CHANGE_UP
+    CHANGE_CHANGE_UP,
+    CHANGE_CEMMNET_AREA
 } from "../actions"
 
 
@@ -37,10 +38,16 @@ export default function reducer(
         messageShow:{
             open:false,
             message:""
-        }
+        },
+        commetTextArea:""
     }, action) {
         switch (action.type) {
-        
+            case CHANGE_CEMMNET_AREA:
+            return {
+                ...state,
+                commetTextArea:action.newValue
+            }
+
             case CHANGE_CHANGE_UP:
             return {
                 ...state,

@@ -19,7 +19,9 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
+.clearBorder{
+  outline: none
+}
 
 .textContainer img{
   width: 100%

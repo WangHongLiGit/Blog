@@ -14,8 +14,8 @@ import $ from "jquery";
 import {  Link } from 'react-router-dom';
 
 import { connect } from 'react-redux';
-import {handle_push_history} from "../actions"
-
+import {handle_push_history,handle_change_up} from "../actions"
+import ConnectMe from "../component/ConnectMe"
 
 
 var baseUrl = {}
@@ -107,7 +107,15 @@ class AllBlogCenter extends Component {
                 this.setState({ loading: true })
             },
             success: (data) => {
-                this.setState({ allBlog: data, loading: false })
+                this.setState({ allBlog: data })
+                window.setTimeout(()=>{
+                    this.setState(
+                        {
+                            loading: false
+                        }
+                    ) 
+                }
+                ,600)
             },
         })
     }
@@ -119,7 +127,7 @@ class AllBlogCenter extends Component {
                 {
                     loading ?
                         <div className="loaderDiv" >
-                            <div className="loader" style={{ top: "20%" }}>
+                            <div className="loader" style={{ top: "15%" }}>
                                 <span className="text">Loading</span>
                                 <span className="spinner"></span>
                             </div>
@@ -129,7 +137,7 @@ class AllBlogCenter extends Component {
                         >
                             <Grid columns={16} style={{ padding: "0px" }}>
                                 <Grid.Column mobile={16} tablet={16} computer={15} style={{ padding: "0px" }}>
-                                    <Header as='h3'>
+                                <Header as='h3' color='black' textAlign='left' style={{fontSize: "1.2rem",paddingLeft: "18px",fontWeight:"700"}}>
                                         <Icon name='book' />
                                         <Header.Content>所有博文</Header.Content>
                                     </Header>
@@ -181,22 +189,9 @@ class AllBlogCenter extends Component {
                 <Grid.Column mobile={16} tablet={4} computer={4}>
                     <CardExampleContentBlock></CardExampleContentBlock>
                     <ContactAndAdvertisment></ContactAndAdvertisment>
-                    <Header as='h4'>
-                        <Icon.Group size='large'>
-                            <Icon loading size='large' name='circle notch' />
-                            <Icon name='qq' />
-                        </Icon.Group>
-                        <Icon.Group size='large'>
-                            <Icon loading size='large' name='circle notch' />
-                            <Icon name='wechat' />
-                        </Icon.Group>
-                        <Icon.Group size='large'>
-                            <Icon loading size='large' name='circle notch' />
-                            <Icon name='mail' />
-                        </Icon.Group>
-                        @联系作者
-                    </Header>
+                    <ConnectMe></ConnectMe>
                 </Grid.Column>
+
             </Grid>
         )
     }
@@ -208,10 +203,14 @@ class AllBlogCenter extends Component {
 export default connect(
     state => {
         return {
-            historyArr:state.historyArr,
+            IsSlideUp:state.IsSlideUp,
+            historyArr:state.historyArr
         }
     },
     dispatch => ({
+        handleChangeUp: function (IsSlideUp) {
+            dispatch(handle_change_up(IsSlideUp))
+          },
         handlePushHistory: function (historyArr,newRoute) {
             dispatch(handle_push_history(historyArr,newRoute))
         },

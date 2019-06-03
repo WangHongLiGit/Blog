@@ -8,11 +8,18 @@ import {
 } from 'semantic-ui-react'
 
 import PropTypes from 'prop-types'
+import {  Link } from 'react-router-dom';
+import {handle_push_history,handle_change_up} from "../actions"
+import { connect } from 'react-redux';
 
 
 class HomepageHeading extends Component {
+    handleHeaderClick(){
+        this.props.handlePushHistory(this.props.historyArr,"/AllBlogCenter")
+        this.props.handleChangeUp(true)
+    }
     render() {
-        const { mobile,IsSlideUp} = this.props
+        const { mobile, IsSlideUp } = this.props
         return (
             <div>
                 <Transition visible={!IsSlideUp} animation='scale' duration={400}>
@@ -25,7 +32,7 @@ class HomepageHeading extends Component {
                                 fontSize: mobile ? '2em' : '4em',
                                 fontWeight: 'normal',
                                 marginBottom: 0,
-                                marginTop: mobile ? '1em' : '3em',
+                                marginTop: mobile ? '0.8em' : '3em',
                             }}
                         />
                         <Header
@@ -38,10 +45,12 @@ class HomepageHeading extends Component {
                                 marginTop: mobile ? '0.5em' : '1.5em',
                             }}
                         />
-                        <Button primary size='huge'>
-                            进入主页
-                          <Icon name='right arrow' />
-                        </Button>
+                        <Link to="/AllBlogCenter">
+                            <Button primary size='large' onClick={()=>{this.handleHeaderClick()}}>
+                                所有博客
+                                <Icon name='right arrow' />
+                            </Button>
+                        </Link>
                     </Container>
                 </Transition>
             </div>
@@ -52,4 +61,19 @@ HomepageHeading.propTypes = {
     mobile: PropTypes.bool,
 }
 
-export default HomepageHeading
+export default connect(
+    state => {
+        return {
+            IsSlideUp:state.IsSlideUp,
+            historyArr:state.historyArr
+        }
+    },
+    dispatch => ({
+        handleChangeUp: function (IsSlideUp) {
+            dispatch(handle_change_up(IsSlideUp))
+          },
+        handlePushHistory: function (historyArr,newRoute) {
+            dispatch(handle_push_history(historyArr,newRoute))
+        },
+    })
+)(HomepageHeading)

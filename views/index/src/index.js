@@ -6,25 +6,12 @@ import * as serviceWorker from './serviceWorker';
 import App from "./App.js"
 //redux引入
 import { createStore, applyMiddleware } from 'redux';
-import { Provider, connect } from 'react-redux';
+import { Provider} from 'react-redux';
 import reduxLogger from 'redux-logger';
 import reduxThunk from 'redux-thunk';
 //路由
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
-import {
-    Divider,
-    Grid,
-    Header,
-    Icon,
-    Image,
-    Card,
-    Feed,
-    Container,
-    Comment,
-    Form,
-    Button,
-    Loader
-} from 'semantic-ui-react'
+import { HashRouter as Router } from 'react-router-dom';
+
 
 //reducer文件引入
 import reducer from './reducers'

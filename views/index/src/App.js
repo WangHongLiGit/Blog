@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 
 //react路由的引入
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
-
+import { HashRouter as Router, Link, Route } from 'react-router-dom';
 //semantic中css的引入
 import 'semantic-ui-css/semantic.min.css';
 
@@ -61,24 +60,24 @@ function NormalLoading({ error, pastDelay }) {
 const HomeCenter = Loadable({
   loader: () => import('./routers/HomeCenter.js'),
   loading: NormalLoading,
-  delay: 100
+  delay: 300
 });
 
 const BlogItems = Loadable({
   loader: () => import('./routers/BlogItems.js'),
   loading: NormalLoading,
-  delay: 100
+  delay: 300
 });
 const AllBlogCenter = Loadable({
   loader: () => import('./routers/AllBlogCenter.js'),
   loading: NormalLoading,
-  delay: 100
+  delay: 300
 
 });
 const TalkCenter = Loadable({
   loader: () => import('./routers/TalkCenter.js'),
   loading: NormalLoading,
-  delay: 100
+  delay: 300
 
 });
 

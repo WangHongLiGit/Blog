@@ -18,13 +18,13 @@ if (cluster.isMaster) {
 } else {
 
 
-
-    var urlString="http://127.0.0.1:4000";
+    //http://127.0.0.1:4000
+    var urlString = "";
 
 
     var express = require("express");
     var app = express();
-    app.listen(4000,'0.0.0.0')
+    app.listen(4000, '0.0.0.0')
 
     app.use('/static',express.static('./views/index/build/static'))
     app.use("/blogItems", express.static('./blogItems'))
@@ -48,7 +48,7 @@ if (cluster.isMaster) {
     var fs = require("fs")
 
 
-    
+
 
     //我们只是在sessionData里面获取用户ID
     //没有获取到  就是没有登录
@@ -67,85 +67,12 @@ if (cluster.isMaster) {
             })
         })
     })
-    
 
 
 
 
 
-    //我们需要时刻更新blogcenter   先放在这里
-    // app.use(function (req, res, next) {
-    //     fs.readdir("./blogItems", function (err, data) {
-    //         data.forEach(function (e) {
-    //             fs.readFile(`./blogItems/${e}/1.md`, function (err, fileData) {
-    //                 var fileString = fileData.toString();
-    //                 var preIndex = fileString.indexOf("#") + 1;
-    //                 var nextIndex = fileString.indexOf("`")
-    //                 var title = fileString.substring(preIndex, nextIndex)
-    //                 var readme = fileString.substring(nextIndex, nextIndex + 50)
-    //                 console.log(e,title,readme)
-    //                 MongoClient.connect('mongodb://127.0.0.1:27017', { useNewUrlParser: true }, function (connectError, client) {
-    //                     if (connectError) {
-    //                         res.status(500).send({ code: 500, msg: "服务器链接错误" })
-    //                         return
-    //                     }
 
-
-    //                     var BlogCenter = client.db('Blog').collection('BlogCenter')
-    //                     BlogCenter.findOne({ direcionNum: e }, function (error, result) {
-    //                         if (error) {
-    //                             res.status(500).send({ code: 500, msg: "服务器查询错误" })
-    //                             return
-    //                         }
-    //                         if (result) {
-    //                             //在已有的文章中只更新  title和readme和blogLogoPath
-    //                             BlogCenter.updateOne(
-    //                                 {
-    //                                     direcionNum: e
-    //                                 },
-    //                                 {
-    //                                     $set: {
-    //                                         title: title,
-    //                                         readme: readme,
-    //                                         blogLogoPath: `http://127.0.0.1:4000/blogItems/${e}/logo.jpg`   //暂时用绝对路径
-    //                                     }
-    //                                 },
-    //                                 {
-    //                                     upsert: true
-    //                                 }
-    //                             ).then(result => {
-    //                                 client.close()
-    //                             })
-    //                         } else {
-    //                             //对于新的的文章  插入整个数据结构
-    //                             BlogCenter.insertOne({
-    //                                 title: title,
-    //                                 readme: readme,
-    //                                 blogLogoPath: `http://127.0.0.1:4000/blogItems/${e}/logo.jpg`,   //暂时用绝对路径
-    //                                 direcionNum: e,
-    //                                 viewNUm: "0",
-    //                                 commentNum: "0",
-    //                                 commentData: [],
-    //                                 replyOneData: [],
-    //                                 replyTwoData: []
-    //                             }, function (error, result) {
-    //                                 if (error) {
-    //                                     res.status(500).send({ code: 500, msg: "服务器查询错误" })
-    //                                     return
-    //                                 }
-    //                                 client.close()
-    //                             })
-
-    //                         }
-    //                     })
-
-    //                 })
-    //             })
-    //         })
-
-    //     })
-    //     next()
-    // })
 
 
 
@@ -167,6 +94,88 @@ if (cluster.isMaster) {
     app.get('/',function(req,res){
         res.sendFile(path.resolve('./views/index/build/index.html'))
     })
+
+
+
+
+    //获取个人信息
+    app.get("/updataBlogs", function (req, res) {
+        fs.readdir("./blogItems", function (err, data) {
+            data.forEach(function (e) {
+                fs.readFile(`./blogItems/${e}/1.md`, function (err, fileData) {
+                    var fileString = fileData.toString();
+                    var preIndex = fileString.indexOf("#") + 1;
+                    var nextIndex = fileString.indexOf("`")
+                    var title = fileString.substring(preIndex, nextIndex)
+                    var readme = fileString.substring(nextIndex, nextIndex + 50)
+                    console.log(e,title,readme)
+                    MongoClient.connect('mongodb://127.0.0.1:27017', { useNewUrlParser: true }, function (connectError, client) {
+                        if (connectError) {
+                            res.status(500).send({ code: 500, msg: "服务器链接错误" })
+                            return
+                        }
+
+
+                        var BlogCenter = client.db('Blog').collection('BlogCenter')
+                        BlogCenter.findOne({ direcionNum: e }, function (error, result) {
+                            if (error) {
+                                res.status(500).send({ code: 500, msg: "服务器查询错误" })
+                                return
+                            }
+                            if (result) {
+                                //在已有的文章中只更新  title和readme和blogLogoPath
+                                BlogCenter.updateOne(
+                                    {
+                                        direcionNum: e
+                                    },
+                                    {
+                                        $set: {
+                                            title: title,
+                                            readme: readme,
+                                            blogLogoPath: `${urlString}/blogItems/${e}/logo.jpg`   //暂时用绝对路径
+                                        }
+                                    },
+                                    {
+                                        upsert: true
+                                    }
+                                ).then(result => {
+                                    client.close()
+                                })
+                            } else {
+                                //对于新的的文章  插入整个数据结构
+                                BlogCenter.insertOne({
+                                    title: title,
+                                    readme: readme,
+                                    blogLogoPath: `${urlString}/blogItems/${e}/logo.jpg`,  //暂时用绝对路径
+                                    direcionNum: e,
+                                    viewNUm: "0",
+                                    commentNum: "0",
+                                    commentData: [],
+                                    replyOneData: [],
+                                    replyTwoData: []
+                                }, function (error, result) {
+                                    if (error) {
+                                        res.status(500).send({ code: 500, msg: "服务器查询错误" })
+                                        return
+                                    }
+                                    client.close()
+                                    return
+
+                                })
+
+                            }
+                        })
+
+                    })
+                })
+            })
+            res.status(200).send({ code: 200, msg: "更新成功" })
+        })
+    })
+
+
+
+
 
     //改变昵称接口
     app.post("/changeNickName", require("body-parser").urlencoded({ extended: false }), function (req, res) {
@@ -199,11 +208,10 @@ if (cluster.isMaster) {
 
 
     //获取个人信息
-    app.get("/getInfo/:sendData", function (req, res) {
+    app.get("/getInfo", function (req, res) {
         if (req.user_id.length == 0) {
             res.status(404).send({ code: 302, meg: "需要重定向" })
         } else {
-            var sendData = req.params.sendData;
             //找到了匹配的user_id
             MongoClient.connect('mongodb://127.0.0.1:27017', { useNewUrlParser: true }, function (connectError, client) {
                 if (connectError) {
@@ -211,17 +219,16 @@ if (cluster.isMaster) {
                     return
                 }
                 var users = client.db('Blog').collection('users');
-                //先查找出来原有的avatarPath
                 users.findOne({ "_id": ObjectId(req.user_id) }, function (error, userfindResult) {
                     if (error) {
                         res.status(500).send({ code: 2005, msg: "数据库查询错误" })
                         return
                     }
                     if (userfindResult) {
-                        if (sendData == "nickname") {
-                            console.log(sendData)
-                            res.status(200).send({ nickname: userfindResult.nickname })
-                        }
+                        res.status(200).send({
+                            _id:userfindResult._id,
+                            nickname:userfindResult.nickname
+                        })
                     }
                 })
 
@@ -239,7 +246,7 @@ if (cluster.isMaster) {
             users.findOne({ _id: ObjectId(userId) }, function (error, result) {
                 if (result) {
                     client.close()
-                    res.sendFile(__dirname + result.avatarPath.slice(21, 100))
+                    res.sendFile(path.resolve("./"+result.avatarPath))
                 }
             })
         })
@@ -471,7 +478,7 @@ if (cluster.isMaster) {
                         var commentData = {
                             senderId: result._id,
                             uniqueNum: uniqueNum,
-                            avatarPath: `$(urlString)/returnAvator/` + result._id,
+                            avatarPath: `${urlString}/returnAvator/` + result._id,
                             nickname: result.nickname,
                             content: content
                         }
@@ -515,7 +522,7 @@ if (cluster.isMaster) {
         if (req.user_id.length == 0) {
             res.status(404).send({ code: 302, meg: "需要重定向" })
         } else {
-            var { content, recieverNum, direcionNum, recieverNickname,reciverId} = req.body;
+            var { content, recieverNum, direcionNum, recieverNickname, reciverId } = req.body;
             var user_id = req.user_id;
 
             //查询用户的avatarPath就行  
@@ -537,7 +544,7 @@ if (cluster.isMaster) {
                             senderAvatarPath: `${urlString}/returnAvator/` + result._id,
                             senderNickname: result.nickname,
                             recieverNum: recieverNum,
-                            reciverId:reciverId,
+                            reciverId: reciverId,
                             uniqueNum: uniqueNum,
                             content: content,
                             recieverNickname: recieverNickname
@@ -581,7 +588,7 @@ if (cluster.isMaster) {
         if (req.user_id.length == 0) {
             res.status(404).send({ code: 302, meg: "需要重定向" })
         } else {
-            var { content, recieverNum, direcionNum, upNum, recieverNickname,reciverId} = req.body;
+            var { content, recieverNum, direcionNum, upNum, recieverNickname, reciverId } = req.body;
             var user_id = req.user_id;
 
             //查询用户的avatarPath就行  
@@ -602,7 +609,7 @@ if (cluster.isMaster) {
                             senderAvatarPath: `${urlString}/returnAvator/` + result._id,
                             senderNickname: result.nickname,
                             recieverNum: recieverNum,
-                            reciverId:reciverId,
+                            reciverId: reciverId,
                             upNum: upNum,
                             recieverNickname: recieverNickname,
                             content: content
@@ -671,7 +678,7 @@ if (cluster.isMaster) {
         if (req.user_id.length == 0) {
             res.status(404).send({ code: 302, meg: "需要重定向" })
         } else {
-            var { content,reciverId} = req.body;
+            var { content, reciverId } = req.body;
             var user_id = req.user_id;
             MongoClient.connect('mongodb://127.0.0.1:27017', { useNewUrlParser: true }, function (connectError, client) {
                 if (connectError) {
@@ -733,7 +740,7 @@ if (cluster.isMaster) {
         if (req.user_id.length == 0) {
             res.status(404).send({ code: 302, meg: "需要重定向" })
         } else {
-            var { content, recieverNum, recieverNickname,reciverId} = req.body;
+            var { content, recieverNum, recieverNickname, reciverId } = req.body;
             var user_id = req.user_id;
 
             //查询用户的avatarPath就行  
@@ -754,7 +761,7 @@ if (cluster.isMaster) {
                             senderAvatarPath: `${urlString}/returnAvator/` + result._id,
                             senderNickname: result.nickname,
                             recieverNum: recieverNum,
-                            reciverId:reciverId,
+                            reciverId: reciverId,
                             uniqueNum: uniqueNum,
                             content: content,
                             recieverNickname: recieverNickname
@@ -799,7 +806,7 @@ if (cluster.isMaster) {
         if (req.user_id.length == 0) {
             res.status(404).send({ code: 302, meg: "需要重定向" })
         } else {
-            var { content, recieverNum, upNum, recieverNickname,reciverId} = req.body;
+            var { content, recieverNum, upNum, recieverNickname, reciverId } = req.body;
             var user_id = req.user_id;
 
             //查询用户的avatarPath就行  
@@ -819,7 +826,7 @@ if (cluster.isMaster) {
                             senderAvatarPath: `${urlString}/returnAvator/` + result._id,
                             senderNickname: result.nickname,
                             recieverNum: recieverNum,
-                            reciverId:reciverId,
+                            reciverId: reciverId,
                             upNum: upNum,
                             recieverNickname: recieverNickname,
                             content: content
@@ -959,3 +966,10 @@ if (cluster.isMaster) {
 
 
 
+// {
+//     "_id": "111111111111111111111111",
+//     "account": "11111",
+//     "password": "11111",
+//     "nickname": "Hongli",
+//     "avatarPath": "http://127.0.0.1:4000/avatars/defualtAvatar/1.jpg"
+// }

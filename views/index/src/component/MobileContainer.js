@@ -17,13 +17,13 @@ import Bottom from './Bottom.js'
 import MessageShow from "../component/MessageShow.js"
 
 import { connect } from 'react-redux';
-import {handle_change_route,handle_change_up} from "../actions"
+import { handle_change_route, handle_change_up } from "../actions"
 
 
 import logo from "../img/logo.jpg"
 
 
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 
 const getWidth = () => {
@@ -66,7 +66,9 @@ class MobileContainer extends Component {
 
   //滑动条
   handleSidebarHide = () => this.setState({ sidebarOpened: false })
-  handleToggle = () => this.setState({ sidebarOpened: true })
+  handleToggle = () => {
+    this.setState({ sidebarOpened: true })
+  }
 
   //监听是否超过这个Visibility 来固定圆圈导航栏
   hideFixedMenu = () => this.setState({ fixed: false })
@@ -84,9 +86,9 @@ class MobileContainer extends Component {
   }
 
   render() {
-    const {IsSlideUp,children, nicknameInput, accoutInput, passwordInput, danger} = this.props;
+    const { IsSlideUp, children, nicknameInput, accoutInput, passwordInput, danger } = this.props;
 
-    const { sidebarOpened, activeItem,fixed} = this.state
+    const { sidebarOpened, activeItem, fixed } = this.state
     return (
       <Responsive
         as={Sidebar.Pushable}
@@ -118,6 +120,8 @@ class MobileContainer extends Component {
           vertical
           visible={sidebarOpened}
         >
+
+
           <Menu.Item >
             <Image src={logo} size="tiny" circular style={{ margin: "0px auto" }} />
             <p style={{ fontSize: "20px" }}>HongLi</p>
@@ -152,55 +156,70 @@ class MobileContainer extends Component {
               注册
             </Menu.Item>
           </Link>
-
         </Sidebar>
 
         {/*pusher里面包括整个的网页内容*/}
-        <Sidebar.Pusher dimmed={sidebarOpened}>
-          <Visibility
-            once={false}
-            onBottomPassed={this.showFixedMenu}
-            onBottomPassedReverse={this.hideFixedMenu}
+        <Sidebar.Pusher dimmed={sidebarOpened}
+        >
+          <div 
+          tabIndex="-1"
+          ref={node => { this.fileInput = node }}
+          onFocus={()=>{
+            this.fileInput.className="clearBorder"
+          }}
+            // onBlur={() => {
+            //   console.log("失去焦点")
+            //   this.setState({ sidebarOpened: false })
+            // }}
           >
-            <Segment
-              inverted
-              textAlign='center'
-              style={IsSlideUp ? { height: "64px", padding: '0.1em 0em', transition: "all .7s ease" } : { height: "305px", padding: '0.1em 0em', transition: "all .7s ease" }}
-              vertical
+            <Visibility
+              once={false}
+              onBottomPassed={this.showFixedMenu}
+              onBottomPassedReverse={this.hideFixedMenu}
             >
-              <Container style={{ transform: "none" }}>
-                <Menu
-                  inverted
-                  pointing
-                  style={{ borderWidth: "0px", }}
-                  secondary
-                  size='large'>
-                  <Menu.Item onClick={this.handleToggle} float="left" style={{ marginBottom: " 9px" }}>
-                    <Icon name='bars' />
-                  </Menu.Item>
+              <Segment
+                inverted
+                textAlign='center'
+                style={IsSlideUp ? { height: "53px", padding: '0.1em 0em', transition: "all .7s ease" } : { height: "247px", padding: '0.1em 0em', transition: "all .7s ease" }}
+                vertical
+              >
+                <Container style={{ transform: "none", height: "40px" }}>
+                  <Menu
+                    inverted
+                    pointing
+                    style={{ borderWidth: "0px", height: "50px" }}
+                    secondary
+                    size='large'>
+                    <Menu.Item onClick={this.handleToggle} float="left" style={{ lineHeight: "9px" }}>
+                      <Icon name='bars' />
+                    </Menu.Item>
 
-                  <Menu.Item position='right'>
-                    <Link to="/Login">
-                      <Button as='a' inverted onClick={() => { this.handleClearItemClick("/Login", accoutInput, passwordInput, nicknameInput, danger) }}>
-                        登录
+                    <Menu.Item position='right'
+                      style={{ height: "50px" }}
+                    >
+                      <Link to="/Login">
+                        <Button as='a' size="tiny" inverted onClick={() => { this.handleClearItemClick("/Login", accoutInput, passwordInput, nicknameInput, danger) }}>
+                          登录
                     </Button>
-                    </Link>
-                    <Link to="/Register">
-                      <Button as='a' inverted style={{ marginLeft: '0.5em' }} onClick={() => { this.handleClearItemClick("/Register", accoutInput, passwordInput, nicknameInput, danger) }}>
-                        注册
+                      </Link>
+                      <Link to="/Register">
+                        <Button as='a' size="tiny" inverted style={{ marginLeft: '0.5em' }} onClick={() => { this.handleClearItemClick("/Register", accoutInput, passwordInput, nicknameInput, danger) }}>
+                          注册
                     </Button>
-                    </Link>
-                  </Menu.Item>
-                </Menu>
-              </Container>
-              <MessageShow></MessageShow>
-              <HomepageHeading mobile={true} IsSlideUp={IsSlideUp} />
-            </Segment>
-          </Visibility>
-          {children}
+                      </Link>
+                    </Menu.Item>
+                  </Menu>
+                </Container>
+                <MessageShow></MessageShow>
+                <HomepageHeading mobile={true} IsSlideUp={IsSlideUp} />
+              </Segment>
+            </Visibility>
+
+            {children}
+          </div>
           <Bottom />
         </Sidebar.Pusher>
-      </Responsive>
+      </Responsive >
 
     )
   }
@@ -214,7 +233,7 @@ MobileContainer.propTypes = {
 export default connect(
   state => {
     return {
-      nicknameInput:state.nicknameInput,
+      nicknameInput: state.nicknameInput,
       accoutInput: state.accoutInput,
       passwordInput: state.passwordInput,
       danger: state.danger,
@@ -225,8 +244,8 @@ export default connect(
     handleChangeUp: function (IsSlideUp) {
       dispatch(handle_change_up(IsSlideUp))
     },
-    handleChangeRoute: function (accoutInput, passwordInput, nicknameInput,danger) {
-      dispatch(handle_change_route(accoutInput, passwordInput, nicknameInput,danger))
-  }
+    handleChangeRoute: function (accoutInput, passwordInput, nicknameInput, danger) {
+      dispatch(handle_change_route(accoutInput, passwordInput, nicknameInput, danger))
+    }
   })
 )(MobileContainer)

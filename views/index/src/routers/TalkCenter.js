@@ -86,7 +86,7 @@ class TalkCenter extends Component {
                 recieverNum: recieverNum,
                 reciverId: senderId,
                 upNum: upNum,
-                replyOneNotTwo: false
+                replyOneNotTwo: false,
             }
         )
         this.refs.textFile.focus();
@@ -182,7 +182,7 @@ class TalkCenter extends Component {
 
     componentWillMount() {
         this.props.handlePushHistory(this.props.historyArr, "/TalkCenter")
-
+        let random = (Math.floor(Math.random() * 900) + 100).toString();
         $.ajax({
             type: "get",
             url: baseUrl.get(`/talkCenter`),
@@ -198,9 +198,17 @@ class TalkCenter extends Component {
                         commentData: result.commentData.reverse(),
                         replyOneData: result.replyOneData,
                         replyTwoData: result.replyTwoData,
-                        loading: false
+                        random:random
                     }
                 )
+                window.setTimeout(()=>{
+                    this.setState(
+                        {
+                            loading: false
+                        }
+                    ) 
+                }
+                ,600)
             },
             error: (data) => {
                 console.log("需要重定向")
@@ -209,8 +217,7 @@ class TalkCenter extends Component {
     }
     render() {
         //为了使每次的图片路径不一样  可以使用户更改完头像后技术更新  如果前后两次的路径是一样的话  浏览器有缓存就不会发送请求
-        let random = (Math.floor(Math.random() * 900) + 100).toString();
-        let { loading, commentNotReply, replyOneNotTwo, replyNickname, textContent, commentData, replyOneData, replyTwoData } = this.state;
+        let { random,loading, commentNotReply, replyOneNotTwo, replyNickname, textContent, commentData, replyOneData, replyTwoData } = this.state;
         console.log(replyOneData)
         return (
             <Container text fluid className="textContainer" style={{ marginTop: "20px" }}>
@@ -235,7 +242,7 @@ class TalkCenter extends Component {
                     </div>
                     {loading ?
                         <div className="loaderDiv" >
-                            <div className="loader" style={{ top: "35%" }}>
+                            <div className="loader" style={{ top: "25%" }}>
                                 <span className="text">Loading</span>
                                 <span className="spinner"></span>
                             </div>
@@ -248,7 +255,7 @@ class TalkCenter extends Component {
                                     <Comment.Author as='a'>
                                         {v.nickname}
                                         {
-                                            v.senderId == "5cecd784e5bb588210292e00" ?
+                                            v.senderId == "111111111111111111111111" ?
                                                 <Label as='a' color='teal' size="tiny" className="nickLable" style={{ lineHeight: "0.2rem", height: "1rem", marginLeft: "0.2rem" }}>
                                                     博主
                                                 </Label> : ""
@@ -276,14 +283,14 @@ class TalkCenter extends Component {
                                                             <Comment.Author as='a'>
                                                                 {v1.senderNickname}
                                                                 {
-                                                                    v1.senderId == "5cecd784e5bb588210292e00" ?
+                                                                    v1.senderId == "111111111111111111111111" ?
                                                                         <Label as='a' color='teal' size="tiny" className="nickLable" style={{ lineHeight: "0.2rem", height: "1rem", marginLeft: "0.2rem" }}>
                                                                             博主
                                                                         </Label> : ""
                                                                 }
                                                                 <span style={{ fontSize: "0.7rem", fontWeight: "500", color: "rgba(0,0,0,.4)", margin: " 0px 4px" }}> 回复</span>
                                                                 {v1.recieverNickname}                                                                {
-                                                                    v1.reciverId == "5cecd784e5bb588210292e00" ?
+                                                                    v1.reciverId == "111111111111111111111111" ?
                                                                         <Label as='a' color='teal' size="tiny" className="nickLable" style={{ lineHeight: "0.2rem", height: "1rem", marginLeft: "0.2rem" }}>
                                                                             博主
                                                                         </Label> : ""
@@ -312,14 +319,14 @@ class TalkCenter extends Component {
                                                                                     <Comment.Author as='a'>
                                                                                         {v2.senderNickname}
                                                                                         {
-                                                                                            v2.senderId == "5cecd784e5bb588210292e00" ?
+                                                                                            v2.senderId == "111111111111111111111111" ?
                                                                                                 <Label as='a' color='teal' size="tiny" className="nickLable" style={{ lineHeight: "0.2rem", height: "1rem", marginLeft: "0.2rem" }}>
                                                                                                     博主
                                                                                                 </Label> : ""
                                                                                         }
                                                                                         <span style={{ fontSize: "0.7rem", fontWeight: "500", color: "rgba(0,0,0,.4)", margin: " 0px 4px" }}> 回复 </span>
                                                                                         {v2.recieverNickname}
-                                                                                        {v2.reciverId == "5cecd784e5bb588210292e00" ?
+                                                                                        {v2.reciverId == "111111111111111111111111" ?
                                                                                             <Label as='a' color='teal' size="tiny" className="nickLable" style={{ lineHeight: "0.2rem", height: "1rem", marginLeft: "0.2rem" }}>
                                                                                                 博主
                                                                                                 </Label> : ""

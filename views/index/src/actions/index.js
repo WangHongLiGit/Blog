@@ -8,6 +8,16 @@ baseUrl.get = function (path) {
     return 'http://127.0.0.1:4000' + path
 }
 
+
+export const CHANGE_CEMMNET_AREA = "CHANGE_CEMMNET_AREA";
+export function change_comment_area(value) {
+    return {
+        type: "CHANGE_CEMMNET_AREA",
+        newValue: value
+    }
+}
+
+
 export const CHANGE_CHANGE_UP = "CHANGE_CHANGE_UP";
 export function handle_change_up(IsSlideUp) {
     return {

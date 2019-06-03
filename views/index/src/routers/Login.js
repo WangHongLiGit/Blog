@@ -32,9 +32,9 @@ class Login extends Component {
           }
         `}
                 </style>
-                <Grid textAlign='center' style={{ height: '100%', margin: "34px 0px" }} verticalAlign='middle'>
+                <Grid textAlign='center' style={{ height: '100%', margin: "6px 0px 34px" }} verticalAlign='middle'>
                     <Grid.Column style={{ maxWidth: 450 }} mobile={16} tablet={7} computer={7}>
-                        <Header as='h2' color='black' textAlign='left' style={{ paddingLeft: "15px" }}>
+                    <Header as='h3' color='black' textAlign='left' style={{fontSize: "1.5rem",paddingLeft: "15px",fontWeight:"700"}}>
                             <Button icon='arrow alternate circle left outline' basic circular onClick={()=>{this.goBack()}} /> 账号登录
                     </Header>
                         <Form size='huge'>

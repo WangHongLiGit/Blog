@@ -19,17 +19,37 @@ class ThanksPay extends Component {
         } else if (value == "aliPay") {
             this.setState({ value: "aliPay", path: aliPay })
         }
-    }
+    } 
     render() {
         return (
             <Grid style={{ margin: "8px 0px" }}>
                 <Grid.Column mobile={16} tablet={16} computer={16} textAlign="center" style={{ margin: "1rem 0m" }}>
-                    <div style={{ width: "40%", display: "inline-block", float: "left" }}>
-                        <Image src={loveYou} size="tiny" style={{ margin: "0px auto 12px auto " }}></Image>
-
                         <Modal
                             open={this.state.modalOpen}
-                            trigger={<Button style={{ backgroundColor: "#e74c3c" }} onClick={this.handleOpen} circular>打赏</Button>}
+                            trigger={
+                                // <Button style={{ backgroundColor: "#e74c3c" }} onClick={this.handleOpen} circular>打赏</Button>
+                                <Header as='h4'>
+                                    <Icon.Group size='large'
+                                        onClick={this.handleOpen}
+                                    >
+                                        <Icon loading size='large' name='circle notch' />
+                                        <Icon name='qq' />
+                                    </Icon.Group>
+                                    <Icon.Group size='large'
+                                        onClick={this.handleOpen}
+                                    >
+                                        <Icon loading size='large' name='circle notch' />
+                                        <Icon name='wechat' />
+                                    </Icon.Group>
+                                    <Icon.Group size='large'
+                                        onClick={this.handleOpen}
+                                    >
+                                        <Icon loading size='large' name='circle notch' />
+                                        <Icon name='mail' />
+                                    </Icon.Group>
+                                    @联系作者
+                                </Header>
+                            }
                         >
 
                             <Modal.Header>
@@ -57,16 +77,7 @@ class ThanksPay extends Component {
                                     />
                                 </Modal.Description>
                             </Modal.Content>
-
                         </Modal>
-                    </div>
-                    <div style={{ width: "60%", display: "inline-block", height: "100%", float: "left" }}>
-                        <Label style={{ height: "137px", width: "100%", fontSize: "1rem", padding: "2rem 0em" }}>
-                            <p>如果您感觉文章还不错~~</p>
-                            <p>可以随意赞赏~~</p>
-                            <p><Icon size="large" name="hand point left"></Icon>点击支持一下哦~~</p>
-                        </Label>
-                    </div>
                 </Grid.Column>
             </Grid>
         )
