@@ -26,7 +26,7 @@ if (cluster.isMaster) {
     var app = express();
     app.listen(4000, '0.0.0.0')
 
-    app.use('/static',express.static('./views/index/build/static'))
+    app.use('/static', express.static('./views/index/build/static'))
     app.use("/blogItems", express.static('./blogItems'))
     app.use("/avatars", express.static('./avatars'))
 
@@ -78,7 +78,7 @@ if (cluster.isMaster) {
 
     //localHost和127.0.0.1属于不同域名是
     //Access to XMLHttpRequest at 'http://127.0.0.1:4000/login'
-    // from origin 'http://localhost:3000' has been blocked by CORS policy: 
+    //from origin 'http://localhost:3000' has been blocked by CORS policy: 
     //The 'Access-Control-Allow-Origin' header has a value 'http://127.0.0.1:3000' that is not equal to the supplied origin.
 
     //跨域问题(Ajax和cookie)
@@ -88,93 +88,95 @@ if (cluster.isMaster) {
         res.setHeader('Access-Control-Allow-Headers', 'content-type,x-requested-with')
         res.setHeader("Access-Control-Allow-Credentials", "true")
         next()
-
     })
 
-    app.get('/',function(req,res){
+    app.get('/', function (req, res) {
         res.sendFile(path.resolve('./views/index/build/index.html'))
     })
 
 
 
-
-    //获取个人信息
+    //更新博客数据按钮
     app.get("/updataBlogs", function (req, res) {
         fs.readdir("./blogItems", function (err, data) {
             data.forEach(function (e) {
-                fs.readFile(`./blogItems/${e}/1.md`, function (err, fileData) {
-                    var fileString = fileData.toString();
-                    var preIndex = fileString.indexOf("#") + 1;
-                    var nextIndex = fileString.indexOf("`")
-                    var title = fileString.substring(preIndex, nextIndex)
-                    var readme = fileString.substring(nextIndex, nextIndex + 50)
-                    console.log(e,title,readme)
-                    MongoClient.connect('mongodb://127.0.0.1:27017', { useNewUrlParser: true }, function (connectError, client) {
-                        if (connectError) {
-                            res.status(500).send({ code: 500, msg: "服务器链接错误" })
-                            return
-                        }
-
-
-                        var BlogCenter = client.db('Blog').collection('BlogCenter')
-                        BlogCenter.findOne({ direcionNum: e }, function (error, result) {
-                            if (error) {
-                                res.status(500).send({ code: 500, msg: "服务器查询错误" })
-                                return
-                            }
-                            if (result) {
-                                //在已有的文章中只更新  title和readme和blogLogoPath
-                                BlogCenter.updateOne(
-                                    {
-                                        direcionNum: e
-                                    },
-                                    {
-                                        $set: {
-                                            title: title,
-                                            readme: readme,
-                                            blogLogoPath: `${urlString}/blogItems/${e}/logo.jpg`   //暂时用绝对路径
-                                        }
-                                    },
-                                    {
-                                        upsert: true
-                                    }
-                                ).then(result => {
-                                    client.close()
-                                })
-                            } else {
-                                //对于新的的文章  插入整个数据结构
-                                BlogCenter.insertOne({
-                                    title: title,
-                                    readme: readme,
-                                    blogLogoPath: `${urlString}/blogItems/${e}/logo.jpg`,  //暂时用绝对路径
-                                    direcionNum: e,
-                                    viewNUm: "0",
-                                    commentNum: "0",
-                                    commentData: [],
-                                    replyOneData: [],
-                                    replyTwoData: []
-                                }, function (error, result) {
+                fs.readdir(`./blogItems/${e}`, function (err, data) {
+                    data.forEach(function (e1) {
+                        // e 代表 第一层的目录0
+                        // e1 代表  第二层目录
+                        console.log(e,e1)
+                        fs.readFile(`./blogItems/${e}/${e1}/1.md`, function (err, fileData) {
+                            var fileString = fileData.toString();
+                            var preIndex = fileString.indexOf("#") + 1;
+                            var nextIndex = fileString.indexOf("`")
+                            var title = fileString.substring(preIndex, nextIndex)
+                            var readme = fileString.substring(nextIndex, nextIndex + 50)
+                            MongoClient.connect('mongodb://127.0.0.1:27017', { useNewUrlParser: true }, function (connectError, client) {
+                                if (connectError) {
+                                    res.status(500).send({ code: 500, msg: "服务器链接错误" })
+                                    return
+                                }
+                                var BlogCenter = client.db('Blog').collection('BlogCenter')
+                                BlogCenter.findOne({ direcionName:e,direcionNum: e1 }, function (error, result) {
                                     if (error) {
                                         res.status(500).send({ code: 500, msg: "服务器查询错误" })
                                         return
                                     }
-                                    client.close()
-                                    return
+                                    if (result) {
+                                        //在已有的文章中只更新  title和readme和blogLogoPath
+                                        BlogCenter.updateOne(
+                                            {
+                                                direcionName:e,
+                                                direcionNum: e1
+                                            },
+                                            {
+                                                $set: {
+                                                    title: title,
+                                                    readme: readme,
+                                                    blogLogoPath: `${urlString}/blogItems/${e}/${e1}/logo.jpg`,  //暂时用绝对路径
+                                                }
+                                            },
+                                            {
+                                                upsert: false    //设置没有找到对应文件  不插入
+                                            }
+                                        ).then(result => {
+                                            client.close()
+                                        })
+                                    } else {
+                                        //对于新的的文章  插入整个数据结构
+                                        BlogCenter.insertOne({
+                                            title: title,
+                                            readme: readme,
+                                            blogLogoPath: `${urlString}/blogItems/${e}/${e1}/logo.jpg`,  //暂时用绝对路径
+                                            direcionName:e,
+                                            direcionNum: e1,
+                                            viewNUm: "59",
+                                            commentNum: "0",
+                                            commentData: [],
+                                            replyOneData: [],
+                                            replyTwoData: []
+                                        }, function (error, result) {
+                                            if (error) {
+                                                res.status(500).send({ code: 500, msg: "服务器查询错误" })
+                                                return
+                                            }
+                                            client.close()
+                                            return
 
+                                        })
+
+                                    }
                                 })
 
-                            }
+                            })
                         })
-
                     })
                 })
+
             })
             res.status(200).send({ code: 200, msg: "更新成功" })
         })
     })
-
-
-
 
 
     //改变昵称接口
@@ -226,8 +228,8 @@ if (cluster.isMaster) {
                     }
                     if (userfindResult) {
                         res.status(200).send({
-                            _id:userfindResult._id,
-                            nickname:userfindResult.nickname
+                            _id: userfindResult._id,
+                            nickname: userfindResult.nickname
                         })
                     }
                 })
@@ -241,12 +243,16 @@ if (cluster.isMaster) {
     app.get("/returnAvator/:userId", function (req, res) {
         //这里我们在发送的时候随机生成了三位尾码  我们要提取出24位有效的id
         var userId = req.params.userId.slice(0, 24);
+        console.log(userId)
+
         MongoClient.connect('mongodb://127.0.0.1:27017', { useNewUrlParser: true }, function (connectError, client) {
             var users = client.db('Blog').collection('users');
             users.findOne({ _id: ObjectId(userId) }, function (error, result) {
+                console.log(result)
                 if (result) {
                     client.close()
-                    res.sendFile(path.resolve("./"+result.avatarPath))
+                    console.log( result.avatarPath)
+                    res.sendFile(path.resolve("./" + result.avatarPath))
                 }
             })
         })
@@ -361,13 +367,13 @@ if (cluster.isMaster) {
     })
 
     //获取单个博客数据
-    app.get("/getBlogItem/:direcionNum", function (req, res) {
-        var blogPath = `./blogItems/${req.params.direcionNum}/1.md`
-        console.log("caaaaaaaaaaaa", blogPath)
+    app.get("/getBlogItem/:direcionName/:direcionNum", function (req, res) {
+        //node后台可以用冒号接受多个参数
+        let {direcionName,direcionNum}=req.params
+        var blogPath = `./blogItems/${direcionName}/${direcionNum}/1.md`
         MongoClient.connect('mongodb://127.0.0.1:27017', { useNewUrlParser: true }, function (connectError, client) {
-
             var BlogCenter = client.db('Blog').collection('BlogCenter')
-            BlogCenter.findOne({ direcionNum: req.params.direcionNum }, function (error, result) {
+            BlogCenter.findOne({ direcionNum:direcionNum }, function (error, result) {
                 if (error) {
                     res.status(500).send({ code: 500, msg: "服务器查询错误" })
                     return
@@ -392,7 +398,7 @@ if (cluster.isMaster) {
 
                     BlogCenter.updateOne(
                         {
-                            direcionNum: req.params.direcionNum
+                            direcionNum: direcionNum
                         },
                         {
                             $set: {
@@ -408,8 +414,6 @@ if (cluster.isMaster) {
                 }
             })
         })
-        console.log("读取路径", blogPath)
-
     })
 
     //获取全部博客
@@ -459,7 +463,7 @@ if (cluster.isMaster) {
         if (req.user_id.length == 0) {
             res.status(404).send({ code: 302, meg: "需要重定向" })
         } else {
-            var { content, direcionNum } = req.body;
+            var { content, direcionNum,direcionName} = req.body;
             var user_id = req.user_id;
             MongoClient.connect('mongodb://127.0.0.1:27017', { useNewUrlParser: true }, function (connectError, client) {
                 if (connectError) {
@@ -483,7 +487,7 @@ if (cluster.isMaster) {
                             content: content
                         }
                         var BlogCenter = client.db('Blog').collection('BlogCenter')
-                        BlogCenter.findOne({ direcionNum: direcionNum }, function (error, result_1) {
+                        BlogCenter.findOne({ direcionName:direcionName,direcionNum: direcionNum }, function (error, result_1) {
                             if (error) {
                                 res.status(500).send({ code: 500, msg: "服务器查询错误" })
                             }
@@ -492,6 +496,7 @@ if (cluster.isMaster) {
                                 commentDataArr.push(commentData)
                                 BlogCenter.updateOne(
                                     {
+                                        direcionName:direcionName,
                                         direcionNum: direcionNum
                                     },
                                     {
@@ -501,7 +506,7 @@ if (cluster.isMaster) {
                                         }
                                     },
                                     {
-                                        upsert: true
+                                        upsert: false
                                     }
                                 ).then(result_2 => {
                                     res.status(200).send(JSON.stringify({ commentData: commentDataArr }))
@@ -522,7 +527,7 @@ if (cluster.isMaster) {
         if (req.user_id.length == 0) {
             res.status(404).send({ code: 302, meg: "需要重定向" })
         } else {
-            var { content, recieverNum, direcionNum, recieverNickname, reciverId } = req.body;
+            var { content, recieverNum,direcionName, direcionNum, recieverNickname, reciverId } = req.body;
             var user_id = req.user_id;
 
             //查询用户的avatarPath就行  
@@ -550,7 +555,7 @@ if (cluster.isMaster) {
                             recieverNickname: recieverNickname
                         }
                         var BlogCenter = client.db('Blog').collection('BlogCenter')
-                        BlogCenter.findOne({ direcionNum: direcionNum }, function (error, result_1) {
+                        BlogCenter.findOne({ direcionName:direcionName,direcionNum: direcionNum }, function (error, result_1) {
                             if (error) {
                                 res.status(500).send({ code: 500, msg: "服务器查询错误" })
                             }
@@ -559,6 +564,7 @@ if (cluster.isMaster) {
                                 replyOneDataArr.push(replyOneData)
                                 BlogCenter.updateOne(
                                     {
+                                        direcionName:direcionName,
                                         direcionNum: direcionNum
                                     },
                                     {
@@ -568,7 +574,7 @@ if (cluster.isMaster) {
                                         }
                                     },
                                     {
-                                        upsert: true
+                                        upsert: false
                                     }
                                 ).then(result_2 => {
                                     res.status(200).send(JSON.stringify({ replyOneData: replyOneDataArr }))
@@ -588,7 +594,7 @@ if (cluster.isMaster) {
         if (req.user_id.length == 0) {
             res.status(404).send({ code: 302, meg: "需要重定向" })
         } else {
-            var { content, recieverNum, direcionNum, upNum, recieverNickname, reciverId } = req.body;
+            var { content, recieverNum,direcionName, direcionNum, upNum, recieverNickname, reciverId } = req.body;
             var user_id = req.user_id;
 
             //查询用户的avatarPath就行  
@@ -615,7 +621,7 @@ if (cluster.isMaster) {
                             content: content
                         }
                         var BlogCenter = client.db('Blog').collection('BlogCenter')
-                        BlogCenter.findOne({ direcionNum: direcionNum }, function (error, result_1) {
+                        BlogCenter.findOne({direcionName:direcionName,direcionNum: direcionNum }, function (error, result_1) {
                             if (error) {
                                 res.status(500).send({ code: 500, msg: "服务器查询错误" })
                             }
@@ -633,7 +639,7 @@ if (cluster.isMaster) {
                                         }
                                     },
                                     {
-                                        upsert: true
+                                        upsert: false
                                     }
                                 ).then(result_2 => {
                                     res.status(200).send(JSON.stringify({ replyTwoData: replyTwoDataArr }))
@@ -907,7 +913,6 @@ if (cluster.isMaster) {
                 var form = new formidable.IncomingForm()
                 //设置上传文件存放的文件夹
                 form.uploadDir = "./avatars"
-                console.log("设置上传文件存放的文件夹", form.uploadDir)
 
                 //该方法会转换请求中所包含的表单数据，callback会包含所有字段域和文件信息  files
                 form.parse(req, function (err, fields, files) {
@@ -915,7 +920,6 @@ if (cluster.isMaster) {
                     if (!files.avator_file) {
                         res.status(500).send({ code: 2000, msg: "没有设置头像" })
                     }
-                    console.log("看看请求中的数据转换", files)
                     //这个是根据传过来的files对象找到path: 'avatars\\upload_ebe5cf90fd0313859503cb44bdbed2e6',
                     //注意：——————————————————————————————————————————————————————————————真正的项目中我们要把它去掉
                     var avatarPathStr = `${urlString}/` + files.avator_file.path;
@@ -940,7 +944,6 @@ if (cluster.isMaster) {
                         //(一)如果原有的头像路径没有defualtAvatar字段   则就不是默认原图像  要删除原有图片
                         if (userfindResult.avatarPath.indexOf("defualtAvatar") == -1) {
                             fs.unlink("./" + userfindResult.avatarPath.slice(21, 600), function (err) {
-                                console.log("删除文件成功")
                                 if (err) {
                                     console.log(err)
                                     return

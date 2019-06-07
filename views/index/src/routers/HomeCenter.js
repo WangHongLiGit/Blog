@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 var baseUrl = {}
 // http://127.0.0.1:4000
 baseUrl.get = function (path) {
-    return 'http://127.0.0.1:4000' + path
+    return '' + path
 }
 
 
@@ -150,7 +150,7 @@ class HomeCenter extends Component {
                                 {hotBlog.map((v, k) => (
                                     <Grid.Column mobile={16} tablet={5} computer={5} key={k}
                                     >
-                                        <Link to={`/BlogItems/${v.direcionNum}`} onClick={() => { this.ChangeUp(true) }}>
+                                        <Link to={{pathname: `/BlogItems/${v.direcionName}/${v.direcionNum}`}} onClick={() => { this.ChangeUp(true) }}>
                                             <Card fluid link>
                                                 <Image src={v.blogLogoPath} style={{ height: "150px" }} />
                                                 <Card.Content>

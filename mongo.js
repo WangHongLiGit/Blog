@@ -10,32 +10,32 @@ MongoClient.connect('mongodb://127.0.0.1:27017', { useNewUrlParser: true }, func
         return
     }
     let users = client.db('Blog').collection('users');
-    let BlogCenter = client.db('Blog').collection('BlogCenter ');
+    let BlogCenter = client.db('Blog').collection('BlogCenter');
     let talkCenter = client.db('Blog').collection('talkCenter');
     let sessionData = client.db('Blog').collection('sessionData');
-
-    //首先把那个一开始注册的博主删除掉
-    users.removeOne({ "nickname": "HongLi" }, function (err, result) {
-        if (err) {
-            console.log(err)
-            return
-        }
-        console.log("原博主删除成功")
-    })
+    BlogCenter.drop();
+    // //首先把那个一开始注册的博主删除掉
+    // users.removeOne({ "nickname": "HongLi" }, function (err, result) {
+    //     if (err) {
+    //         console.log(err)
+    //         return
+    //     }
+    //     console.log("原博主删除成功")
+    // })
     //在插入一个博主
-    users.insertOne({
-        "_id": ObjectId("111111111111111111111111"),
-        "account": "11111",
-        "password": "11111",
-        "nickname": "HongLi",
-        "avatarPath": "/avatars/logo.jpg"
-    }, function (err, result) {
-        if (err) {
-            console.log(err)
-            return
-        }
-        console.log("新博主插入成功")
-    })
+    // users.insertOne({
+    //     "_id": ObjectId("111111111111111111111111"),
+    //     "account": "11111",
+    //     "password": "11111",
+    //     "nickname": "HongLi",
+    //     "avatarPath": "/avatars/logo.jpg"
+    // }, function (err, result) {
+    //     if (err) {
+    //         console.log(err)
+    //         return
+    //     }
+    //     console.log("新博主插入成功")
+    // })
 
 
     // //新建一个talkCenter表格

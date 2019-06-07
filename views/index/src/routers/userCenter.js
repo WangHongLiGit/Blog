@@ -6,11 +6,10 @@ import { Button, Form, Grid, Header, Icon } from 'semantic-ui-react'
 import ContactAndAdvertisment from '../component/ContactAndAdvertisment'
 import $ from "jquery"
 import { handle_push_history } from "../actions"
-
 var baseUrl = {}
 // http://127.0.0.1:4000
 baseUrl.get = function (path) {
-    return 'http://127.0.0.1:4000' + path
+    return '' + path
 }
 
 

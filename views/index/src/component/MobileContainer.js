@@ -167,10 +167,10 @@ class MobileContainer extends Component {
           onFocus={()=>{
             this.fileInput.className="clearBorder"
           }}
-            // onBlur={() => {
-            //   console.log("失去焦点")
-            //   this.setState({ sidebarOpened: false })
-            // }}
+            onBlur={() => {
+              console.log("失去焦点")
+              this.setState({ sidebarOpened: false })
+            }}
           >
             <Visibility
               once={false}

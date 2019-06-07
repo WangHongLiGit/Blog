@@ -11,17 +11,17 @@ import {
 } from 'semantic-ui-react'
 import $ from "jquery";
 
-import {  Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { connect } from 'react-redux';
-import {handle_push_history,handle_change_up} from "../actions"
+import { handle_push_history, handle_change_up } from "../actions"
 import ConnectMe from "../component/ConnectMe"
 
 
 var baseUrl = {}
 // http://127.0.0.1:4000
 baseUrl.get = function (path) {
-    return 'http://127.0.0.1:4000' + path
+    return '' + path
 }
 
 
@@ -97,7 +97,7 @@ class AllBlogCenter extends Component {
         })
     }
     componentWillMount() {
-        this.props.handlePushHistory(this.props.historyArr,"/AllBlogCenter")
+        this.props.handlePushHistory(this.props.historyArr, "/AllBlogCenter")
         $.ajax({
             type: "get",
             url: baseUrl.get(`/allBlogCenter`),
@@ -108,14 +108,14 @@ class AllBlogCenter extends Component {
             },
             success: (data) => {
                 this.setState({ allBlog: data })
-                window.setTimeout(()=>{
+                window.setTimeout(() => {
                     this.setState(
                         {
                             loading: false
                         }
-                    ) 
+                    )
                 }
-                ,600)
+                    , 600)
             },
         })
     }
@@ -137,7 +137,7 @@ class AllBlogCenter extends Component {
                         >
                             <Grid columns={16} style={{ padding: "0px" }}>
                                 <Grid.Column mobile={16} tablet={16} computer={15} style={{ padding: "0px" }}>
-                                <Header as='h3' color='black' textAlign='left' style={{fontSize: "1.2rem",paddingLeft: "18px",fontWeight:"700"}}>
+                                    <Header as='h3' color='black' textAlign='left' style={{ fontSize: "1.2rem", paddingLeft: "18px", fontWeight: "700" }}>
                                         <Icon name='book' />
                                         <Header.Content>所有博文</Header.Content>
                                     </Header>
@@ -149,7 +149,7 @@ class AllBlogCenter extends Component {
                                 {allBlog.map((v, k) => (
                                     <Grid.Column mobile={16} tablet={5} computer={5} key={k}
                                     >
-                                        <Link to={`/BlogItems/${v.direcionNum}`} onClick={()=>{this.returnUp()}}>
+                                        <Link to={{pathname: `/BlogItems/${v.direcionName}/${v.direcionNum}`}} onClick={() => { this.returnUp()}}>
                                             <Card fluid link style={{ height: "100%" }}>
                                                 <Image src={v.blogLogoPath} style={{ height: "150px" }} />
                                                 <Card.Content>
@@ -203,16 +203,16 @@ class AllBlogCenter extends Component {
 export default connect(
     state => {
         return {
-            IsSlideUp:state.IsSlideUp,
-            historyArr:state.historyArr
+            IsSlideUp: state.IsSlideUp,
+            historyArr: state.historyArr
         }
     },
     dispatch => ({
         handleChangeUp: function (IsSlideUp) {
             dispatch(handle_change_up(IsSlideUp))
-          },
-        handlePushHistory: function (historyArr,newRoute) {
-            dispatch(handle_push_history(historyArr,newRoute))
+        },
+        handlePushHistory: function (historyArr, newRoute) {
+            dispatch(handle_push_history(historyArr, newRoute))
         },
     })
 )(AllBlogCenter)

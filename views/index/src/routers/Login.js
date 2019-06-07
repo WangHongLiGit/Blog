@@ -9,7 +9,7 @@ import $ from "jquery";
 var baseUrl = {}
 // http://127.0.0.1:4000
 baseUrl.get = function (path) {
-    return 'http://127.0.0.1:4000' + path
+    return '' + path
 }
 class Login extends Component {
     goBack(){

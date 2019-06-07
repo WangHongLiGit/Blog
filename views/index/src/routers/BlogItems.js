@@ -43,7 +43,7 @@ marked.setOptions({
 var baseUrl = {}
 // http://127.0.0.1:4000
 baseUrl.get = function (path) {
-    return 'http://127.0.0.1:4000' + path
+    return '' + path
 }
 
 
@@ -111,7 +111,7 @@ class BlogItems extends Component {
     }
     //取消回复
     cancelReply() {
-        this.setState({ commentNotReply: true})
+        this.setState({ commentNotReply: true })
         //切换回复的时候  我们要将内容清空
         this.props.changeCommentArea("")
     }
@@ -124,8 +124,11 @@ class BlogItems extends Component {
         })
     }
     //两个提交按钮
-    submitComment(direcionNum) {
-        let textContent=this.props.commetTextArea;
+    submitComment() {
+        let textContent = this.props.commetTextArea;
+        let pathArr = this.props.location.pathname.split("/");
+        let direcionName = pathArr[2];
+        let direcionNum = pathArr[3];
         //在点击提交评论的瞬间  把内容值设置到状态中
         if (textContent.length != 0) {
             $.ajax({
@@ -134,6 +137,7 @@ class BlogItems extends Component {
                 xhrFields: { withCredentials: true },
                 data: {
                     content: textContent,
+                    direcionName: direcionName,
                     direcionNum: direcionNum
                 },
                 dataType: "json",
@@ -150,11 +154,13 @@ class BlogItems extends Component {
         }
         //点击提交结束后  要清空内容
         this.props.changeCommentArea("")
-        }
+    }
     submitReply() {
-        let textContent=this.props.commetTextArea;
+        let textContent = this.props.commetTextArea;
         let replyOneNotTwo = this.state.replyOneNotTwo;
-        let direcionNum = this.props.match.params.direcionNum;
+        let pathArr = this.props.location.pathname.split("/");
+        let direcionName = pathArr[2];
+        let direcionNum = pathArr[3];
         if (textContent.length != 0) {
             //第一层回复
             if (replyOneNotTwo) {
@@ -164,9 +170,10 @@ class BlogItems extends Component {
                     url: baseUrl.get(`/replyOne`),
                     xhrFields: { withCredentials: true },
                     data: {
-                        content:textContent,
+                        content: textContent,
                         recieverNum: this.state.recieverNum,
                         reciverId: this.state.reciverId,
+                        direcionName: direcionName,
                         direcionNum, direcionNum,
                         recieverNickname: this.state.replyNickname,
                     },
@@ -188,10 +195,11 @@ class BlogItems extends Component {
                     url: baseUrl.get(`/replyTwo`),
                     xhrFields: { withCredentials: true },
                     data: {
-                        content:textContent,
+                        content: textContent,
                         recieverNum: this.state.recieverNum,
                         reciverId: this.state.reciverId,
                         upNum: this.state.upNum,
+                        direcionName: direcionName,
                         direcionNum, direcionNum,
                         recieverNickname: this.state.replyNickname
                     },
@@ -216,11 +224,14 @@ class BlogItems extends Component {
 
     componentWillMount() {
         let random = (Math.floor(Math.random() * 900) + 100).toString();
-        let direcionNum = this.props.match.params.direcionNum;
-        this.props.handlePushHistory(this.props.historyArr, `/BlogItems/${direcionNum}`)
+        let pathArr = this.props.location.pathname.split("/");
+        let direcionName = pathArr[2];
+        let direcionNum = pathArr[3];
+        console.log("cddddccdc",this.props.location.pathname)
+        this.props.handlePushHistory(this.props.historyArr, this.props.location.pathname)
         $.ajax({
             type: "get",
-            url: baseUrl.get(`/getBlogItem/${direcionNum}`),
+            url: baseUrl.get(`/getBlogItem/${direcionName}/${direcionNum}`),
             xhrFields: { withCredentials: true },
             dataType: "json",
             beforeSend: () => {
@@ -254,8 +265,7 @@ class BlogItems extends Component {
     render() {
         //为了使每次的图片路径不一样  可以使用户更改完头像后技术更新  如果前后两次的路径是一样的话  浏览器有缓存就不会发送请求
         let { random, loading, input, commentNotReply, replyOneNotTwo, replyNickname, commentData, replyOneData, replyTwoData } = this.state;
-        let direcionNum = this.props.match.params.direcionNum;
-        let textContent=this.props.commetTextArea;
+        let textContent = this.props.commetTextArea;
         return (
             <Container text fluid className="textContainer" style={{ marginTop: "20px" }}>
 
@@ -287,7 +297,7 @@ class BlogItems extends Component {
                                     <Form reply>
                                         <textarea value={textContent} style={{ height: "9em" }} ref="textFile" onChange={(e) => { this.handleTextChange(e) }} />
                                         {
-                                            commentNotReply ? <Button content="提交评论" labelPosition='left' icon='edit' primary onClick={() => { this.submitComment(direcionNum) }} />
+                                            commentNotReply ? <Button content="提交评论" labelPosition='left' icon='edit' primary onClick={() => { this.submitComment() }} />
                                                 : <Button content="提交回复" labelPosition='left' icon='edit' primary onClick={() => { this.submitReply(replyOneNotTwo) }} />
                                         }
                                         {commentNotReply ? "" : <Button content="取消回复" primary onClick={() => { this.cancelReply() }} />}

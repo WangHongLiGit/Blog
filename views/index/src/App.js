@@ -105,7 +105,7 @@ function App() {
       <HomeResponsiveContainer>
         <Route exact path="/" component={HomeCenter}></Route>
         <Route path="/AllBlogCenter" component={AllBlogCenter}></Route>
-        <Route path="/BlogItems/:direcionNum" component={BlogItems}></Route>
+        <Route path="/BlogItems" component={BlogItems}></Route>
         <Route path="/TalkCenter" component={TalkCenter}></Route>
         <Route path="/Login" component={Login}></Route>
         <Route path="/Register" component={Register}></Route>
