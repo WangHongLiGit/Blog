@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 
 //react路由的引入
-import { Route } from 'react-router-dom';
+import { HashRouter as Router, Link, Route } from 'react-router-dom';
 //semantic中css的引入
 import 'semantic-ui-css/semantic.min.css';
 
@@ -13,17 +13,36 @@ import DesktopContainer from './component/DesktopContainer.js'
 import MobileContainer from './component/MobileContainer.js'
 import userCenter from './routers/userCenter.js'
 
-
+// import HomeCenter from './routers/HomeCenter.js'
+// import BlogItems from './routers/BlogItems.js'
+// import AllBlogCenter from './routers/AllBlogCenter.js'
+// import TalkCenter from './routers/TalkCenter.js'
 
 import Login from './routers/Login.js'
 import Register from './routers/Register.js'
 
 //semantic的组件的引入
+import PropTypes from 'prop-types'
 
 import Loadable from 'react-loadable';
 
 
-
+function MyLoadingComponent({ error, pastDelay }) {
+  if (error) {
+    return <div>Error!</div>;
+  } else if (pastDelay) {
+    return (
+      <div className="loaderDiv">
+        <div className="loader">
+          <span className="text">Loading</span>
+          <span className="spinner"></span>
+        </div>
+      </div>
+    )
+  } else {
+    return null;
+  }
+}
 function NormalLoading({ error, pastDelay }) {
   if (error) {
     return <div>Error!</div>;
@@ -53,11 +72,13 @@ const AllBlogCenter = Loadable({
   loader: () => import('./routers/AllBlogCenter.js'),
   loading: NormalLoading,
   delay: 300
+
 });
 const TalkCenter = Loadable({
   loader: () => import('./routers/TalkCenter.js'),
   loading: NormalLoading,
   delay: 300
+
 });
 
 
@@ -67,6 +88,7 @@ const TalkCenter = Loadable({
 class HomeResponsiveContainer extends Component{
   render(){
     const {children}=this.props;
+    console.log(children)
     return(
 <div>
     <DesktopContainer >{children}</DesktopContainer>

@@ -1,6 +1,7 @@
 import $ from "jquery";
 
 //设置定时器
+let timer;
 var baseUrl = {}
 // http://127.0.0.1:4000
 baseUrl.get = function (path) {
@@ -46,21 +47,6 @@ export function return_change_double_state_action(name_1, state_1, name_2, state
     }
 }
 
-
-export const CHANGE_THREE_STATE = "CHANGE_THREE_STATE";
-export function return_change_three_state_action(name_1, state_1, name_2, state_2, name_3, state_3) {
-    return {
-        type: CHANGE_DOUBLE_STATE,
-        name_1,
-        state_1,
-        name_2,
-        state_2,
-        name_3,
-        state_3
-    }
-}
-
-
 export const CHANGE_FOUR_STATE = "CHANGE_FOUR_STATE";
 export function return_change_four_state_action(name_1, state_1, name_2, state_2, name_3, state_3, name_4, state_4) {
     return {
@@ -86,7 +72,7 @@ export function handle_account_input(value, danger, accoutInput) {
             passwordInputRed: false,
             nameInputRed: false
         }
-        if (value.length > 4 && value.length < 12) {
+        if (value.length > 4 && value.length < 11) {
             accoutInput = {
                 ...accoutInput,
                 accoutNumber: value,
@@ -143,7 +129,7 @@ export function handle_nickname_input(value, danger, nicknameInput) {
 //登录点击按钮
 export function handle_login_click(accoutInput, passwordInput, danger, history, historyArr, messageShow) {
     return dispatch => {
-        if (accoutInput.accoutNumber.length === 0) {
+        if (accoutInput.accoutNumber.length == 0) {
             danger = {
                 ...danger,
                 accoutInputRed: true,
@@ -159,14 +145,14 @@ export function handle_login_click(accoutInput, passwordInput, danger, history, 
                 dangerText: "账号格式错误 请输入5~11位账号"
             }
             dispatch(return_change_single_state_action("danger", danger))
-        } else if (passwordInput.passwordNumber.length === 0) {
+        } else if (passwordInput.passwordNumber.length == 0) {
             danger = {
                 ...danger,
                 passwordInputRed: true,
                 dangerText: "请输入密码"
             }
             dispatch(return_change_single_state_action("danger", danger))
-        } else if (passwordInput.passwordNumber.length !== 0) {
+        } else if (!passwordInput.passwordNumber.length == 0) {
             //密码不为空的的时候  就可以发送到后台验证   验证账号密码的正确性   
             //登录的时候不用判断密码的格式 只有在设置的时候才用判断
 
@@ -197,14 +183,14 @@ export function handle_login_click(accoutInput, passwordInput, danger, history, 
                     }, 1000)
                 },
                 error: function (data) {
-                    if (data.responseJSON.code === 1002) {
+                    if (data.responseJSON.code == 1002) {
                         danger = {
                             ...danger,
                             accoutInputRed: true,
                             dangerText: "该账号号还没有注册"
                         }
                         dispatch(return_change_single_state_action("danger", danger))
-                    } else if (data.responseJSON.code === 1001) {
+                    } else if (data.responseJSON.code == 1001) {
                         danger = {
                             ...danger,
                             passwordInputRed: true,
@@ -222,7 +208,7 @@ export function handle_login_click(accoutInput, passwordInput, danger, history, 
 //注册点击按钮
 export function handle_register_click(accoutInput, passwordInput, nicknameInput, danger, history,messageShow) {
     return dispatch => {
-        if (accoutInput.accoutNumber.length === 0) {
+        if (accoutInput.accoutNumber.length == 0) {
             danger = {
                 ...danger,
                 accoutInputRed: true,
@@ -235,7 +221,7 @@ export function handle_register_click(accoutInput, passwordInput, nicknameInput,
             danger = {
                 ...danger,
                 accoutInputRed: true,
-                dangerText: "账号格式错误 请设置5~11位账号"
+                dangerText: "账号格式错误 请设置5~16位账号"
             }
             dispatch(return_change_single_state_action("danger", danger))
         } else if (accoutInput.isAccoutCorrect) {
@@ -250,14 +236,14 @@ export function handle_register_click(accoutInput, passwordInput, nicknameInput,
                 success: function (data) {
 
                     //成功代表没有注册
-                    if (passwordInput.passwordNumber.length === 0) {
+                    if (passwordInput.passwordNumber.length == 0) {
                         danger = {
                             ...danger,
                             passwordInputRed: true,
                             dangerText: "密码不能设置为空"
                         }
                         dispatch(return_change_single_state_action("danger", danger))
-                    } else if (nicknameInput.nickname.length === 0) {
+                    } else if (nicknameInput.nickname.length == 0) {
                         //isAccoutCorrect检查格式是否正确
                         danger = {
                             ...danger,
@@ -265,7 +251,7 @@ export function handle_register_click(accoutInput, passwordInput, nicknameInput,
                             dangerText: "设置昵称呗~~"
                         }
                         dispatch(return_change_single_state_action("danger", danger))
-                    } else if (nicknameInput.nickname.length !== 0) {
+                    } else if (!nicknameInput.nickname.length == 0) {
                         var reg = /^[a-zA-Z0-9]{5,11}$/;
                         if (reg.test(passwordInput.passwordNumber)) {
                             $.ajax({
@@ -280,20 +266,12 @@ export function handle_register_click(accoutInput, passwordInput, nicknameInput,
                                 },
                                 success: function (data) {
                                     history.replace("/Login")
-                                    accoutInput = {
-                                        ...accoutInput,
-                                        accoutNumber: accoutInput.accoutNumber
-                                    }
-                                    passwordInput = {
-                                        ...passwordInput,
-                                        passwordNumber: passwordInput.passwordNumber
-                                    }
                                     messageShow = {
                                         ...messageShow,
                                         open: true,
                                         message: "注册成功 请登录~"
                                     }
-                                    dispatch(return_change_three_state_action("messageShow", messageShow,"accoutInput", accoutInput, "passwordInput", passwordInput))
+                                    dispatch(return_change_single_state_action("messageShow", messageShow))
                                     window.setTimeout(function () {
                                         messageShow = {
                                             ...messageShow,
@@ -318,7 +296,7 @@ export function handle_register_click(accoutInput, passwordInput, nicknameInput,
                     }
                 },
                 error: function (data) {
-                    if (data.responseJSON.code === 1003) {
+                    if (data.responseJSON.code == 1003) {
                         danger = {
                             ...danger,
                             accoutInputRed: true,
@@ -370,22 +348,12 @@ export function handle_push_history(historyArr, newRoute) {
 
 //提示信息
 export function handle_message_show(messageShow, message) {
-    return dispatch => {
-        messageShow = {
-            ...messageShow,
-            open: true,
-            message: message
-        }
-        dispatch(return_change_single_state_action("messageShow", messageShow))
-        window.setTimeout(function () {
-            messageShow = {
-                ...messageShow,
-                open: false,
-                message: ""
-            }
-            dispatch(return_change_single_state_action("messageShow", messageShow))
-        }, 1000)
+    messageShow = {
+        ...messageShow,
+        open: true,
+        message: message
     }
+    return return_change_single_state_action("messageShow", messageShow)
 }
 
 

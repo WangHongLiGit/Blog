@@ -1,33 +1,36 @@
 import React, { Component } from 'react';
 import {
+  Container,
   List,
-  Image,
-  Grid,
+  Segment,
+  Divider,
+  Image
 } from 'semantic-ui-react'
 //头像引入
 import logo from "../img/logo.jpg"
-import flag1 from "../img/flag-1.png"
-import flag2 from "../img/flag-2.gif"
-
 class Bottom extends Component {
   render() {
-    const { backColor } = this.props;
     return (
-      <Grid style={{ background: backColor, textAlign: "center", padding: "14px 34px" }}>
-        <Grid.Column mobile={16} tablet={16} computer={16}>
-          <Image circular centered size='mini' src={logo} />
-          <List horizontal inverted size='small'>
-            <List.Item as='a' href='http://www.beian.miit.gov.cn/'  style={{marginRight:"3px"}}>
-              Copyright © 2019
+      <Segment inverted vertical style={{ margin: '0em 0em 0em', padding: '0.5em 0em' }}>
+      <Container textAlign='center'>
+        <Divider inverted section/>
+        <Image circular centered size='mini' src={logo} />
+        <List horizontal inverted divided link size='small'>
+          <List.Item as='a' href='#'>
+            Site Map
           </List.Item>
-            <img style={{ width: "12px" }} src={flag1} alt="" />
-            <List.Item as='a' href='http://www.beian.miit.gov.cn/' style={{marginLeft:"3px"}}>
-              黑ICP备19004024号
+          <List.Item as='a' href='#'>
+            Contact Us
           </List.Item>
-          </List>
-
-        </Grid.Column>
-      </Grid>
+          <List.Item as='a' href='#'>
+            Terms and Conditions
+          </List.Item>
+          <List.Item as='a' href='#'>
+            Privacy Policy
+          </List.Item>
+        </List>
+      </Container>
+    </Segment>
     )
   }
 }

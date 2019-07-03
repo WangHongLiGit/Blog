@@ -24,7 +24,7 @@ if (cluster.isMaster) {
 
     var express = require("express");
     var app = express();
-    app.listen(80, '0.0.0.0')
+    app.listen(4000, '0.0.0.0')
 
     app.use('/static', express.static('./views/index/build/static'))
     app.use("/blogItems", express.static('./blogItems'))
@@ -93,9 +93,6 @@ if (cluster.isMaster) {
     app.get('/', function (req, res) {
         res.sendFile(path.resolve('./views/index/build/index.html'))
     })
-    app.get('/favicon.ico', function (req, res) {
-        res.sendFile(path.resolve('./views/index/build/favicon.ico'))
-    })
 
 
 
@@ -107,7 +104,7 @@ if (cluster.isMaster) {
                     data.forEach(function (e1) {
                         // e 代表 第一层的目录0
                         // e1 代表  第二层目录
-                        console.log(e, e1)
+                        console.log(e,e1)
                         fs.readFile(`./blogItems/${e}/${e1}/1.md`, function (err, fileData) {
                             var fileString = fileData.toString();
                             var preIndex = fileString.indexOf("#") + 1;
@@ -120,7 +117,7 @@ if (cluster.isMaster) {
                                     return
                                 }
                                 var BlogCenter = client.db('Blog').collection('BlogCenter')
-                                BlogCenter.findOne({ direcionName: e, direcionNum: e1 }, function (error, result) {
+                                BlogCenter.findOne({ direcionName:e,direcionNum: e1 }, function (error, result) {
                                     if (error) {
                                         res.status(500).send({ code: 500, msg: "服务器查询错误" })
                                         return
@@ -129,7 +126,7 @@ if (cluster.isMaster) {
                                         //在已有的文章中只更新  title和readme和blogLogoPath
                                         BlogCenter.updateOne(
                                             {
-                                                direcionName: e,
+                                                direcionName:e,
                                                 direcionNum: e1
                                             },
                                             {
@@ -151,7 +148,7 @@ if (cluster.isMaster) {
                                             title: title,
                                             readme: readme,
                                             blogLogoPath: `${urlString}/blogItems/${e}/${e1}/logo.jpg`,  //暂时用绝对路径
-                                            direcionName: e,
+                                            direcionName:e,
                                             direcionNum: e1,
                                             viewNUm: "59",
                                             commentNum: "0",
@@ -175,7 +172,6 @@ if (cluster.isMaster) {
                         })
                     })
                 })
-
 
             })
             res.status(200).send({ code: 200, msg: "更新成功" })
@@ -255,7 +251,7 @@ if (cluster.isMaster) {
                 console.log(result)
                 if (result) {
                     client.close()
-                    console.log(result.avatarPath)
+                    console.log( result.avatarPath)
                     res.sendFile(path.resolve("./" + result.avatarPath))
                 }
             })
@@ -373,11 +369,11 @@ if (cluster.isMaster) {
     //获取单个博客数据
     app.get("/getBlogItem/:direcionName/:direcionNum", function (req, res) {
         //node后台可以用冒号接受多个参数
-        let { direcionName, direcionNum } = req.params
+        let {direcionName,direcionNum}=req.params
         var blogPath = `./blogItems/${direcionName}/${direcionNum}/1.md`
         MongoClient.connect('mongodb://127.0.0.1:27017', { useNewUrlParser: true }, function (connectError, client) {
             var BlogCenter = client.db('Blog').collection('BlogCenter')
-            BlogCenter.findOne({ direcionNum: direcionNum }, function (error, result) {
+            BlogCenter.findOne({ direcionNum:direcionNum }, function (error, result) {
                 if (error) {
                     res.status(500).send({ code: 500, msg: "服务器查询错误" })
                     return
@@ -420,36 +416,14 @@ if (cluster.isMaster) {
         })
     })
 
-    //搜索接口
-    app.get("/search", function (req, res) {
+    //获取全部博客
+    app.get("/allBlogCenter", function (req, res) {
         MongoClient.connect('mongodb://127.0.0.1:27017', { useNewUrlParser: true }, function (connectError, client) {
             if (connectError) {
                 res.status(500).send({ code: 500, msg: "服务器链接错误" })
                 return
             }
             client.db('Blog').collection('BlogCenter').find({}).toArray(function (error, result) {
-                if (error) {
-                    res.status(500).send({ code: 500, msg: "服务器查询错误" })
-                    return
-                }
-                if (result) {
-                    res.status(200).send(JSON.stringify(result))
-                } else {
-                    res.status(500).send({ code: 500, msg: "服务器啥都没查到" })
-                }
-            })
-        })
-    })
-
-    //获取全部博客
-    app.get("/allBlogCenter/:categery", function (req, res) {
-        let { categery } = req.params
-        MongoClient.connect('mongodb://127.0.0.1:27017', { useNewUrlParser: true }, function (connectError, client) {
-            if (connectError) {
-                res.status(500).send({ code: 500, msg: "服务器链接错误" })
-                return
-            }
-            client.db('Blog').collection('BlogCenter').find({ direcionName: categery }).toArray(function (error, result) {
                 if (error) {
                     res.status(500).send({ code: 500, msg: "服务器查询错误" })
                     return
@@ -489,7 +463,7 @@ if (cluster.isMaster) {
         if (req.user_id.length == 0) {
             res.status(404).send({ code: 302, meg: "需要重定向" })
         } else {
-            var { content, direcionNum, direcionName } = req.body;
+            var { content, direcionNum,direcionName} = req.body;
             var user_id = req.user_id;
             MongoClient.connect('mongodb://127.0.0.1:27017', { useNewUrlParser: true }, function (connectError, client) {
                 if (connectError) {
@@ -513,7 +487,7 @@ if (cluster.isMaster) {
                             content: content
                         }
                         var BlogCenter = client.db('Blog').collection('BlogCenter')
-                        BlogCenter.findOne({ direcionName: direcionName, direcionNum: direcionNum }, function (error, result_1) {
+                        BlogCenter.findOne({ direcionName:direcionName,direcionNum: direcionNum }, function (error, result_1) {
                             if (error) {
                                 res.status(500).send({ code: 500, msg: "服务器查询错误" })
                             }
@@ -522,7 +496,7 @@ if (cluster.isMaster) {
                                 commentDataArr.push(commentData)
                                 BlogCenter.updateOne(
                                     {
-                                        direcionName: direcionName,
+                                        direcionName:direcionName,
                                         direcionNum: direcionNum
                                     },
                                     {
@@ -553,7 +527,7 @@ if (cluster.isMaster) {
         if (req.user_id.length == 0) {
             res.status(404).send({ code: 302, meg: "需要重定向" })
         } else {
-            var { content, recieverNum, direcionName, direcionNum, recieverNickname, reciverId } = req.body;
+            var { content, recieverNum,direcionName, direcionNum, recieverNickname, reciverId } = req.body;
             var user_id = req.user_id;
 
             //查询用户的avatarPath就行  
@@ -581,7 +555,7 @@ if (cluster.isMaster) {
                             recieverNickname: recieverNickname
                         }
                         var BlogCenter = client.db('Blog').collection('BlogCenter')
-                        BlogCenter.findOne({ direcionName: direcionName, direcionNum: direcionNum }, function (error, result_1) {
+                        BlogCenter.findOne({ direcionName:direcionName,direcionNum: direcionNum }, function (error, result_1) {
                             if (error) {
                                 res.status(500).send({ code: 500, msg: "服务器查询错误" })
                             }
@@ -590,7 +564,7 @@ if (cluster.isMaster) {
                                 replyOneDataArr.push(replyOneData)
                                 BlogCenter.updateOne(
                                     {
-                                        direcionName: direcionName,
+                                        direcionName:direcionName,
                                         direcionNum: direcionNum
                                     },
                                     {
@@ -620,7 +594,7 @@ if (cluster.isMaster) {
         if (req.user_id.length == 0) {
             res.status(404).send({ code: 302, meg: "需要重定向" })
         } else {
-            var { content, recieverNum, direcionName, direcionNum, upNum, recieverNickname, reciverId } = req.body;
+            var { content, recieverNum,direcionName, direcionNum, upNum, recieverNickname, reciverId } = req.body;
             var user_id = req.user_id;
 
             //查询用户的avatarPath就行  
@@ -647,7 +621,7 @@ if (cluster.isMaster) {
                             content: content
                         }
                         var BlogCenter = client.db('Blog').collection('BlogCenter')
-                        BlogCenter.findOne({ direcionName: direcionName, direcionNum: direcionNum }, function (error, result_1) {
+                        BlogCenter.findOne({direcionName:direcionName,direcionNum: direcionNum }, function (error, result_1) {
                             if (error) {
                                 res.status(500).send({ code: 500, msg: "服务器查询错误" })
                             }
@@ -696,8 +670,7 @@ if (cluster.isMaster) {
                             {
                                 commentData: result.commentData,
                                 replyOneData: result.replyOneData,
-                                replyTwoData: result.replyTwoData,
-                                isShowMessage: req.user_id.length == 0
+                                replyTwoData: result.replyTwoData
                             }
                         )
                     )

@@ -16,7 +16,9 @@ class Regiser extends Component {
         const { passwordNumber } = passwordInput;
         const { nickname } = nicknameInput;
         const history=this.props.history;
+
         const { passwordInputRed, accoutInputRed, nicknameInputRed,dangerText } = danger;
+
         return (
             <div className='login-form'>
                 <style>{`
@@ -40,7 +42,7 @@ class Regiser extends Component {
                                     value={accoutNumber}
                                     fluid icon='user'
                                     iconPosition='left'
-                                    placeholder='请设置5~11位数字账号'
+                                    placeholder='请设置5~12位数字账号'
                                     style={{ height: "50px", position: "relative" }}
                                     error={accoutInputRed}
                                     onChange={(event) => { handleAccountInput(event.target.value, danger, accoutInput) }}
@@ -73,12 +75,7 @@ class Regiser extends Component {
                                     error={nicknameInputRed}
                                     onChange={(event) => { handleNicknameInput(event.target.value, danger, nicknameInput) }}
                                 />
-                                <Button
-                                color='black' fluid size='large'
-                                style={{
-                                    background:"#74787a"
-                                }} 
-                                onClick={() => { handleRegisterClick(accoutInput, passwordInput,nicknameInput,danger,history,messageShow) }}>
+                                <Button color='black' fluid size='large' onClick={() => { handleRegisterClick(accoutInput, passwordInput,nicknameInput,danger,history,messageShow) }}>
                                 注册
                                 </Button>
                                 <Message>
