@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react'
+import { Button, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 import ContactAndAdvertisment from '../component/ContactAndAdvertisment'
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 import { connect } from 'react-redux';
 import { handle_account_input, handle_password_input, handle_login_click,handle_change_route} from "../actions"
-import $ from "jquery";
 var baseUrl = {}
 // http://127.0.0.1:4000
 baseUrl.get = function (path) {
@@ -17,8 +16,8 @@ class Login extends Component {
     }
     render() {
         const { messageShow,nicknameInput,accoutInput, passwordInput, danger, handleAccountInput,handlePasswordInput,handleLoginClick,handleChangeRoute} = this.props;
-        const { accoutNumber, isAccoutExist, isAccoutCorrect } = accoutInput;
-        const { passwordNumber, isPasswordCorrect } = passwordInput;
+        const { accoutNumber} = accoutInput;
+        const { passwordNumber} = passwordInput;
         const { passwordInputRed, accoutInputRed, dangerText } = danger;
         const history=this.props.history;
         const historyArr=this.props.historyArr.reverse();
@@ -45,7 +44,7 @@ class Login extends Component {
                                     value={accoutNumber}
                                     fluid icon='user'
                                     iconPosition='left'
-                                    placeholder='5~12位数字账号'
+                                    placeholder='5~11位数字账号'
                                     style={{ height: "50px",position:"relative"}}
                                     error={accoutInputRed}
                                     onChange={(event) => { handleAccountInput(event.target.value, danger, accoutInput) }}
@@ -55,6 +54,7 @@ class Login extends Component {
                                 <span style={{ color: "red",height:"20px",display:"block",marginTop:"-12px",float:"left"}}>{passwordInputRed?dangerText:""}</span>
 
                                 <Form.Input
+                                    value={passwordNumber}
                                     fluid
                                     icon='lock'
                                     iconPosition='left'
@@ -64,9 +64,15 @@ class Login extends Component {
                                     error={passwordInputRed}
                                     onChange={(event) => { handlePasswordInput(event.target.value, danger, passwordInput) }}
                                 />
-                                <Button color='black' fluid size='large' onClick={() => { handleLoginClick(accoutInput,passwordInput, danger,history,historyArr,messageShow)}}>
+                                <Button
+                                fluid size='large' 
+                                color="black"
+                                style={{
+                                    background:"#74787a"
+                                }}
+                                onClick={() => { handleLoginClick(accoutInput,passwordInput, danger,history,historyArr,messageShow)}}>
                                     登录
-                </Button>
+                                </Button>
                                 <Message>
                                     还没有账号? <Link to="/Register" onClick={()=>{handleChangeRoute(accoutInput, passwordInput, nicknameInput,danger)}}>注册</Link>
                                 </Message>

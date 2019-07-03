@@ -20,7 +20,7 @@
   color: white;
 }
 .clearBorder{
-  outline: none
+  outline: none;
 }
 
 .textContainer img{
@@ -61,8 +61,19 @@ pre {
   background: #333;
   overflow-x: auto;      
   border-radius: 4px;
-}
 
+}
+blockquote{
+  padding: 20px;
+  margin: 0px;
+  border-left: 6px solid;
+  line-height: 30px;
+  border-color: #b4b4b4;
+  background-color: #f7f7f7;
+}
+p img{
+  width: 100%
+}
 
 .loaderDiv{
   z-index: 100000;
@@ -97,7 +108,6 @@ pre {
   user-select: none;
   cursor: default;
 }
-
 /* Text align it the center of screen and connect the looped animation for 2.5 seconds */
 .loader .text {
   position: absolute;

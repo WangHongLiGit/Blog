@@ -19,9 +19,8 @@ import MessageShow from "../component/MessageShow.js"
 import { connect } from 'react-redux';
 import { handle_change_route, handle_change_up } from "../actions"
 
-
 import logo from "../img/logo.jpg"
-
+                                   
 
 import { Link } from 'react-router-dom';
 
@@ -76,16 +75,19 @@ class MobileContainer extends Component {
 
 
   //相当重要了这个  因为这个是学会了运用基本的js中的wiindow中的location属性获取了一系列参数
+  //自从换成hashRouter之后  我们的pathname就始终变成了"/"
   componentWillMount() {
     this.setState(
       {
-        activeItem: window.location.pathname
+        activeItem: window.location.hash.substring(1)
       }
     )
-    this.props.handleChangeUp(!(window.location.pathname == "/"))
+    this.props.handleChangeUp(!(window.location.hash === "#/"))
   }
 
   render() {
+    console.log("桌面端的",Responsive.onlyTablet.minWidth)
+
     const { IsSlideUp, children, nicknameInput, accoutInput, passwordInput, danger } = this.props;
 
     const { sidebarOpened, activeItem, fixed } = this.state
@@ -114,7 +116,7 @@ class MobileContainer extends Component {
         <Sidebar
           as={Menu}
           animation='push'
-          style={{ maxHeight: "1000px", position: "fixed", top: "0px", textAlign: "center" }}
+          style={{ maxHeight: "1000px", position: "fixed", top: "0px", textAlign: "center",background:"#464849"}}
           inverted
           onHide={this.handleSidebarHide}
           vertical
@@ -122,9 +124,11 @@ class MobileContainer extends Component {
         >
 
 
-          <Menu.Item >
-            <Image src={logo} size="tiny" circular style={{ margin: "0px auto" }} />
-            <p style={{ fontSize: "20px" }}>HongLi</p>
+          <Menu.Item style={{height:"120px",padding:"1.3rem"}}>
+            <Image src={logo} size="tiny" circular style={{ float:"left" }} />
+            <p style={{ fontSize: "20p",marginBottom:"9px",marginTop:"7px"}}>HongLi</p>
+            <p style={{ fontSize: "11px" }}>身份：大二学生</p>
+            <p style={{ fontSize: "11px" }}>上线时间：2019/6/1</p>
           </Menu.Item>
           <Link to="/">
             <Menu.Item as='a' name='/' active={activeItem === '/'} onClick={() => { this.handleHomeClick("/") }}
@@ -165,22 +169,23 @@ class MobileContainer extends Component {
           tabIndex="-1"
           ref={node => { this.fileInput = node }}
           onFocus={()=>{
-            this.fileInput.className="clearBorder"
+            this.fileInput.className="clearBorder";
+            console.log("获取焦点")
           }}
-            onBlur={() => {
-              console.log("失去焦点")
-              this.setState({ sidebarOpened: false })
-            }}
-          >
-            <Visibility
-              once={false}
+          onBlur={()=>{
+            console.log("失去焦点")
+            this.setState({sidebarOpened:false})
+          }}
+          >w
+            <VisibilityQ
+              once={falseQw}
               onBottomPassed={this.showFixedMenu}
               onBottomPassedReverse={this.hideFixedMenu}
             >
               <Segment
                 inverted
                 textAlign='center'
-                style={IsSlideUp ? { height: "53px", padding: '0.1em 0em', transition: "all .7s ease" } : { height: "247px", padding: '0.1em 0em', transition: "all .7s ease" }}
+                style={IsSlideUp ? { height: "53px", padding: '0.1em 0em', transition: "all .7s ease",background:"#74787a"} : { height: "247px", padding: '0.1em 0em', transition: "all .7s ease",background:"#74787a"}}
                 vertical
               >
                 <Container style={{ transform: "none", height: "40px" }}>
@@ -214,10 +219,9 @@ class MobileContainer extends Component {
                 <HomepageHeading mobile={true} IsSlideUp={IsSlideUp} />
               </Segment>
             </Visibility>
-
             {children}
           </div>
-          <Bottom />
+          <Bottom  backColor="rgb(116, 120, 122)"/>
         </Sidebar.Pusher>
       </Responsive >
 

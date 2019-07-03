@@ -11,17 +11,15 @@ import {
 import PropTypes from 'prop-types'
 import HomepageHeading from './HomepageHeading.js'
 import MessageShow from "../component/MessageShow.js"
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import {handle_change_route, handle_change_up } from "../actions"
+import { handle_change_route, handle_change_up } from "../actions"
 
 
 
 import Bottom from './Bottom.js'
 
-//history
-import { createBrowserHistory } from 'history';
-const history = createBrowserHistory();
+
 
 
 //电脑版导航栏
@@ -37,18 +35,18 @@ class DesktopContainer extends Component {
   handleItemClick(name) {
     this.setState({ activeItem: name })
     this.props.handleChangeUp(true)
-    this.returnUp() 
+    this.returnUp()
   }
   handleClearItemClick(name, accoutInput, passwordInput, nicknameInput, danger) {
     this.setState({ activeItem: name, IsSlideUp: true })
     this.props.handleChangeUp(true)
     this.props.handleChangeRoute(accoutInput, passwordInput, nicknameInput, danger)
-    this.returnUp() 
+    this.returnUp()
   }
   handleHomeClick(name) {
     this.setState({ activeItem: name });
     this.props.handleChangeUp(false)
-    this.returnUp() 
+    this.returnUp()
   }
 
 
@@ -64,18 +62,20 @@ class DesktopContainer extends Component {
   hideFixedMenu = () => this.setState({ fixed: false })
   showFixedMenu = () => this.setState({ fixed: true })
   //相当重要了这个  因为这个是学会了运用基本的js中的wiindow中的location属性获取了一系列参数
+  //自从换成hashRouter之后  我们的pathname就始终变成了"/"  componentWillMount() {
   componentWillMount() {
-    this.setState({
-      activeItem: window.location.pathname
-    })
-    this.props.handleChangeUp(!(window.location.pathname == "/"))
-
+    this.setState(
+      {
+        activeItem: window.location.hash.substring(1)
+      }
+    )
+    this.props.handleChangeUp(!(window.location.hash === "#/"))
   }
 
   render() {
-    const { IsSlideUp, children, nicknameInput, accoutInput, passwordInput, danger, handleAccountInput, handlePasswordInput, handleLoginClick, handleChangeRoute } = this.props;
+    const { IsSlideUp, children, nicknameInput, accoutInput, passwordInput, danger} = this.props;
     const { fixed, activeItem } = this.state
-
+console.log("桌面端的",Responsive.onlyTablet.minWidth)
     return (
       //在桌面宽度下可见  小于最小桌面宽度不可见
       <Responsive getWidth={getWidth} minWidth={Responsive.onlyTablet.minWidth}>
@@ -141,7 +141,7 @@ class DesktopContainer extends Component {
         </Visibility>
 
         {children}
-        <Bottom />
+        <Bottom  backColor="#1b1c1d"/>
       </Responsive>
     )
   }
