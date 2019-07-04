@@ -114,7 +114,7 @@ class MobileContainer extends Component {
         <Sidebar
           as={Menu}
           animation='push'
-          style={{ maxHeight: "1000px", position: "fixed", top: "0px", textAlign: "center" }}
+          style={{ maxHeight: "1000px", position: "fixed", top: "0px", textAlign: "center",background:"#464849"}}
           inverted
           onHide={this.handleSidebarHide}
           vertical
@@ -167,10 +167,6 @@ class MobileContainer extends Component {
           onFocus={()=>{
             this.fileInput.className="clearBorder"
           }}
-            onBlur={() => {
-              console.log("失去焦点")
-              this.setState({ sidebarOpened: false })
-            }}
           >
             <Visibility
               once={false}
@@ -180,8 +176,7 @@ class MobileContainer extends Component {
               <Segment
                 inverted
                 textAlign='center'
-                style={IsSlideUp ? { height: "53px", padding: '0.1em 0em', transition: "all .7s ease" } : { height: "247px", padding: '0.1em 0em', transition: "all .7s ease" }}
-                vertical
+                style={IsSlideUp ? { height: "53px", padding: '0.1em 0em', transition: "all .7s ease",background:"#74787a"} : { height: "247px", padding: '0.1em 0em', transition: "all .7s ease",background:"#74787a"}}                vertical
               >
                 <Container style={{ transform: "none", height: "40px" }}>
                   <Menu
