@@ -12,15 +12,12 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Slider from '@material-ui/lab/Slider';
 import AvatarEditor from 'react-avatar-editor'
 import $ from "jquery"
-import { connect } from 'tls';
-
-
 
 
 var baseUrl = {}
 // http://127.0.0.1:4000
 baseUrl.get = function (path) {
-    return '' + path
+    return "" + path
 }
 
 
@@ -46,7 +43,6 @@ const styles = {
     },
 };
 
-let imageURL;
 
 //全局  所选择的图片
 let selectImg;
@@ -92,7 +88,6 @@ class SimpleDialog extends React.Component {
             data: formdata,
             xhrFields: { withCredentials: true },
             success: (data) => {
-                    console.log("上传头像成功")
                     this.props.changeUserAvator(data.avatarPath)
                     this.handleClose()
             }
@@ -113,7 +108,7 @@ class SimpleDialog extends React.Component {
     }
     render() {
         const { UploadImage, classes, onClose, selectedValue, ...other } = this.props;
-        const { value, image, width, height, border, color, scale } = this.state
+        const { value, width, height, border, color, scale } = this.state
         return (
             <Dialog aria-labelledby="simple-dialog-title" {...other} style={{margin : '-48px'}}>
                     <Card className={classes.card}  style={{ display:"flex",flexDirection:"column",alignItems:"center",}} >

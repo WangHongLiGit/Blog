@@ -14,21 +14,22 @@ class ThanksPay extends Component {
     handleOpen = () => this.setState({ modalOpen: true })
     handleClose = () => this.setState({ modalOpen: false })
     handleChange = (e, { value }) => {
-        if (value == "wePay") {
+        if (value === "wePay") {
             this.setState({ value: "wePay", path: wePay })
-        } else if (value == "aliPay") {
+        } else if (value === "aliPay") {
             this.setState({ value: "aliPay", path: aliPay })
         }
     }
     render() {
         return (
             <Grid style={{ margin: "8px 0px" }}>
-                <Grid.Column mobile={16} tablet={16} computer={16} textAlign="center" style={{ margin: "1rem 0m" }}>
+                <Grid.Column mobile={16} tablet={16} computer={16} textAlign="center" style={{ margin: "1rem 0m",padding:"0px" }}>
                     <div style={{ width: "40%", display: "inline-block", float: "left" }}>
                         <Image src={loveYou} size="tiny" style={{ margin: "0px auto 12px auto " }}></Image>
 
                         <Modal
                             open={this.state.modalOpen}
+                            style={{maxWidth:"600px"}}
                             trigger={<Button style={{ backgroundColor: "#e74c3c" }} onClick={this.handleOpen} circular>打赏</Button>}
                         >
 
@@ -57,7 +58,6 @@ class ThanksPay extends Component {
                                     />
                                 </Modal.Description>
                             </Modal.Content>
-
                         </Modal>
                     </div>
                     <div style={{ width: "60%", display: "inline-block", height: "100%", float: "left" }}>

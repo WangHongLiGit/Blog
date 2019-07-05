@@ -1,6 +1,7 @@
 import {
     CHANGE_SINGLE_STATE,
     CHANGE_DOUBLE_STATE,
+    CHANGE_THREE_STATE,
     CHANGE_FOUR_STATE,
     CHANGE_CHANGE_UP,
     CHANGE_CEMMNET_AREA
@@ -64,6 +65,13 @@ export default function reducer(
                 ...state,
                 [action.name_1]:action.state_1,
                 [action.name_2]:action.state_2
+            }
+            case CHANGE_THREE_STATE:
+            return {
+                ...state,
+                [action.name_1]:action.state_1,
+                [action.name_2]:action.state_2,
+                [action.name_3]:action.state_3
             }
             case CHANGE_FOUR_STATE:
             return {
