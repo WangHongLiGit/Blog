@@ -996,10 +996,3 @@ if (cluster.isMaster) {
 
 
 
-// {
-//     "_id": "111111111111111111111111",
-//     "account": "11111",
-//     "password": "11111",
-//     "nickname": "Hongli",
-//     "avatarPath": "http://127.0.0.1:4000/avatars/defualtAvatar/1.jpg"
-// }
