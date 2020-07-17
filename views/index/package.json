@@ -11,7 +11,7 @@
     "highlight.js": "^9.15.6",
     "history": "^4.9.0",
     "jquery": "^3.4.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "marked": "^0.6.2",
     "react": "^16.8.6",
     "react-avatar-editor": "^11.0.7",
